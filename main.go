@@ -48,6 +48,7 @@ func AuthRequired() gin.HandlerFunc {
 }
 
 func main() {
+	DB.ShowSQL(true)
 	r := gin.Default()
 	r.Use(Cors())
 	authorized := r.Group("/uitranslate")
@@ -65,6 +66,16 @@ func main() {
 		authorized.POST("/update/category", UpdateTranslateCategory)
 		// 获取分类下面的翻译内容
 		authorized.GET("/get/category/classid/:id", GetTranslateByClassid)
+
+		authorized.GET("/get/jobcategoryclass", GetJobCategoryClass)
+		authorized.GET("/get/jobcategorysubclass/:id", GetJobCategorySubClass)
+		authorized.POST("/update/jobcategoryclass", EditJobCategoryClass)
+		authorized.POST("/update/jobcategorysubclass", EditJobCategorySubClass)
+		authorized.POST("/add/jobcategoryclass", AddJobCategoryClass)
+		authorized.POST("/add/jobcategorysubclass", AddJobCategorySubClass)
+		authorized.POST("/delete/jobcategoryclass", DeleteJobCategoryClass)
+		authorized.POST("/delete/jobcategorysubclass", DeleteJobCategorySubClass)
+
 	}
 
 	r.Run(":8332")
@@ -177,7 +188,184 @@ type UITranslate struct {
 	Transkey string `json:"transkey" binding:"required"`
 	English  string `json:"english" binding:"required"`
 	Japanese string `json:"japanese" binding:"required"`
+	Classid  int    `json:"classid" binding:"required"`
 }
+
+// /////////////////JobCategory///////////////////////
+// 获取工作一级分类
+func GetJobCategoryClass(c *gin.Context) {
+	var _JobCategory []JobCategory
+	err := DB.Table("job_category").Where("parentid=?", 0).Find(&_JobCategory)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"status": 0, "msg": "", "data": _JobCategory})
+}
+
+// 获取工作二级分类
+type JobCategorySubClass struct {
+	Parentid int `uri:"parentid"`
+}
+
+func GetJobCategorySubClass(c *gin.Context) {
+	var (
+		_JobCategorySubClass JobCategorySubClass
+		_JobCategory         []JobCategory
+	)
+	err := c.ShouldBindUri(&_JobCategorySubClass)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	err = DB.Table("job_category").Where("parentid=?", _JobCategorySubClass.Parentid).Find(&_JobCategory)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"status": 0, "msg": "", "data": _JobCategory})
+}
+
+// 添加工作一级分类
+type InsertJobCategoryClass struct {
+	NameEn string `json:"english" binding:"required"`
+	NameJa string `json:"japanese" binding:"required"`
+}
+
+func AddJobCategoryClass(c *gin.Context) {
+	var _InsertJobCategoryClass InsertJobCategoryClass
+	err := c.ShouldBindJSON(&_InsertJobCategoryClass)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	_, err = DB.Table("job_category").Insert(&_InsertJobCategoryClass)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+}
+
+// 添加工作二级分类
+type InsertJobCategorySubClass struct {
+	NameEn   string `json:"english" binding:"required"`
+	NameJa   string `json:"japanese" binding:"required"`
+	Parentid int    `json:"parentid" binding:"required"`
+}
+
+func AddJobCategorySubClass(c *gin.Context) {
+	var _InsertJobCategorySubClass InsertJobCategorySubClass
+	err := c.ShouldBindJSON(&_InsertJobCategorySubClass)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	_, err = DB.Table("job_category").Insert(&_InsertJobCategorySubClass)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+}
+
+// 修改工作一级分类
+type UpdateJobCategoryClass struct {
+	Id     int    `json:"id" binding:"required"`
+	NameEn string `json:"english" binding:"required"`
+	NameJa string `json:"japanese" binding:"required"`
+}
+
+func EditJobCategoryClass(c *gin.Context) {
+	var _UpdateJobCategoryClass UpdateJobCategoryClass
+	err := c.ShouldBindJSON(&_UpdateJobCategoryClass)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	_, err = DB.Table("job_category").ID(_UpdateJobCategoryClass.Id).Where("parentid=0").Update(&_UpdateJobCategoryClass)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+}
+
+// 修改二级分类
+type UpdateJobCategorySubClass struct {
+	Id       int    `json:"id" binding:"required"`
+	NameEn   string `json:"english" binding:"required"`
+	NameJa   string `json:"japanese" binding:"required"`
+	Parentid int    `json:"parentid" binding:"required"`
+}
+
+func EditJobCategorySubClass(c *gin.Context) {
+	var _UpdateJobCategorySubClass UpdateJobCategorySubClass
+	err := c.ShouldBindJSON(&_UpdateJobCategorySubClass)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	_, err = DB.Table("job_category").ID(_UpdateJobCategorySubClass.Id).Where("parentid=?", _UpdateJobCategorySubClass.Parentid).And("parentid!=0").Update(&_UpdateJobCategorySubClass)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+}
+
+// 删除一级分类
+type RemoveJobCategoryClass struct {
+	Id int `json:"id" binding:"required"`
+}
+
+func DeleteJobCategoryClass(c *gin.Context) {
+	var (
+		_RemoveJobCategoryClass RemoveJobCategoryClass
+		_JobCategory            []JobCategory
+	)
+	err := c.ShouldBindJSON(&_RemoveJobCategoryClass)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	err = DB.Table("job_category").Where("parentid=?", _RemoveJobCategoryClass.Id).Limit(1).Find(&_JobCategory)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	if len(_JobCategory) > 1 {
+		c.JSON(200, gin.H{"status": 1, "msg": "delete subclass first"})
+	}
+	_, err = DB.Table("job_category").ID(_RemoveJobCategoryClass.Id).Where("parentid=0").Delete(&JobCategory{})
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+}
+
+// 删除二级分类
+type RemoveJobCategorySubClass struct {
+	Id int `json:"id" binding:"required"`
+}
+
+func DeleteJobCategorySubClass(c *gin.Context) {
+	var _RemoveJobCategorySubClass RemoveJobCategorySubClass
+	err := c.ShouldBindJSON(&_RemoveJobCategorySubClass)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	_, err = DB.Table("job_category").ID(_RemoveJobCategorySubClass.Id).Where("parentid!=0").Delete(&JobCategory{})
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+}
+
+////////////////////////////////////////////////////
 
 // //////////////////////////////////////////////////////////////
 func GetTranslateByClassid(c *gin.Context) {
@@ -269,15 +457,15 @@ func GetTranslateByClassid(c *gin.Context) {
 		c.JSON(200, gin.H{"status": 0, "msg": "", "data": data})
 		return
 	}
-	if classid == 14 {
-		data, err := GetJobCategory()
-		if err != nil {
-			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
-			return
-		}
-		c.JSON(200, gin.H{"status": 0, "msg": "", "data": data})
-		return
-	}
+	//if classid == 14 {
+	// data, err := GetJobCategory()
+	// if err != nil {
+	// 	c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+	// 	return
+	// }
+	// c.JSON(200, gin.H{"status": 0, "msg": "", "data": data})
+	// return
+	//}
 	if classid >= 100 {
 		data, err := GetUITranslate(classid)
 		if err != nil {
@@ -353,13 +541,14 @@ func GetJapanCity() (data []JapanCity, err error) {
 	}
 	return data, nil
 }
-func GetJobCategory() (data []JobCategory, err error) {
-	err = DB.Table("job_category").Find(&data)
-	if err != nil {
-		return data, err
-	}
-	return data, nil
-}
+
+//	func GetJobCategory() (data []JobCategory, err error) {
+//		err = DB.Table("job_category").Find(&data)
+//		if err != nil {
+//			return data, err
+//		}
+//		return data, nil
+//	}
 func GetUITranslate(id int) (data []UITranslate, err error) {
 	err = DB.Table("translate").Where("classid=?", id).Find(&data)
 	if err != nil {
