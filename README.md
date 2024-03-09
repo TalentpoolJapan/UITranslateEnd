@@ -67,7 +67,7 @@ status 0 正常 1 错误
 ### 修改下拉列表翻译分类 (json全字段提交)
 URL:https://dev.talentpool.co.jp/uitranslate/update/selectcategorylist
 
-METHOD: POST
+Method: POST
 
 ```
 {
@@ -79,6 +79,47 @@ METHOD: POST
 RESPONSE
 ```
 {
+    "msg": "",
+    "status": 0
+}
+```
+#### 说明
+status 0 正常 1 错误
+
+### 根据下拉下来列表分类ID获取该分类下面的翻译内容列表
+URL: http://dev.talentpool.co.jp/uitranslate/get/selectcategorylist/classid/:id
+
+Method: Get
+
+Example:
+
+Get http://dev.talentpool.co.jp/uitranslate/get/selectcategorylist/classid/5
+
+Response
+```
+{
+    "data": [
+        {
+            "id": 1,
+            "english": "Full time",
+            "japanese": "正社員"
+        },
+        {
+            "id": 2,
+            "english": "Freelance",
+            "japanese": "フリーランス"
+        },
+        {
+            "id": 3,
+            "english": "Contract",
+            "japanese": "業務委託"
+        },
+        {
+            "id": 4,
+            "english": "Dispatched",
+            "japanese": "派遣"
+        }
+    ],
     "msg": "",
     "status": 0
 }
