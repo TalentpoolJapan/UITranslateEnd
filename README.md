@@ -151,7 +151,7 @@ Response:
 }
 ```
 #### 说明
-classname 分类名称 这部分的classname禁止修改，仅可以修改tag 修改的时候不要传classname
+classname 分类名称 这部分的classname禁止修改，仅可以修改tag 修改的时候请原样提交
 
 tag 代表可以通过 http://dev.talentpool.co.jp/i18nUI/{classname}.json 访问到json格式翻译
 
