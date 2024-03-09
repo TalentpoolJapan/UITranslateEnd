@@ -127,7 +127,7 @@ func UpdateTranslateCategory(c *gin.Context) {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
 		return
 	}
-	_, err = DB.Table("translate_class").ID(_TranslateClass.Id).Update(_TranslateClass)
+	_, err = DB.Table("translate_class").Where("id=?", _TranslateClass.Id).Update(_TranslateClass)
 	if err != nil {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
 		return
@@ -314,7 +314,7 @@ func EditJobCategoryClass(c *gin.Context) {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
 		return
 	}
-	_, err = DB.Table("job_category").ID(_UpdateJobCategoryClass.Id).Where("parentid=0").Update(&_UpdateJobCategoryClass)
+	_, err = DB.Table("job_category").Where("id=?", _UpdateJobCategoryClass.Id).And("parentid=0").Update(&_UpdateJobCategoryClass)
 	if err != nil {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
 		return
@@ -337,7 +337,7 @@ func EditJobCategorySubClass(c *gin.Context) {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
 		return
 	}
-	_, err = DB.Table("job_category").ID(_UpdateJobCategorySubClass.Id).Where("parentid=?", _UpdateJobCategorySubClass.Parentid).And("parentid!=0").Update(&_UpdateJobCategorySubClass)
+	_, err = DB.Table("job_category").Where("id=?", _UpdateJobCategorySubClass.Id).And("parentid=?", _UpdateJobCategorySubClass.Parentid).And("parentid!=0").Update(&_UpdateJobCategorySubClass)
 	if err != nil {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
 		return
@@ -368,7 +368,7 @@ func DeleteJobCategoryClass(c *gin.Context) {
 	if len(_JobCategory) > 1 {
 		c.JSON(200, gin.H{"status": 1, "msg": "delete subclass first"})
 	}
-	_, err = DB.ID(_RemoveJobCategoryClass.Id).Where("parentid=0").Delete(&JobCategory{})
+	_, err = DB.Where("id=?", _RemoveJobCategoryClass.Id).And("parentid=0").Delete(&JobCategory{})
 	if err != nil {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
 		return
@@ -388,7 +388,7 @@ func DeleteJobCategorySubClass(c *gin.Context) {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
 		return
 	}
-	_, err = DB.ID(_RemoveJobCategorySubClass.Id).Where("parentid!=0").Delete(&JobCategory{})
+	_, err = DB.Where("id=?", _RemoveJobCategorySubClass.Id).And("parentid!=0").Delete(&JobCategory{})
 	if err != nil {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
 		return
@@ -826,14 +826,14 @@ func UpdateJobType(data JobType) (err error) {
 	if data.Id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.Table("job_type").ID(data.Id).Update(&data)
+	_, err = DB.Table("job_type").Where("id=?", data.Id).Update(&data)
 	return err
 }
 func DeleteJobType(id int) (err error) {
 	if id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.ID(id).Delete(&JobType{})
+	_, err = DB.Where("id=?", id).Delete(&JobType{})
 	return err
 }
 func GetLanguages() (data []Languages, err error) {
@@ -851,14 +851,14 @@ func UpdateLanguages(data Languages) (err error) {
 	if data.Id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.Table("languages").ID(data.Id).Update(&data)
+	_, err = DB.Table("languages").Where("id=?", data.Id).Update(&data)
 	return err
 }
 func DeleteLanguages(id int) (err error) {
 	if id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.ID(id).Delete(&Languages{})
+	_, err = DB.Where("id=?", id).Delete(&Languages{})
 	return err
 }
 func GetWorkStyle() (data []WorkStyle, err error) {
@@ -876,14 +876,14 @@ func UpdateWorkStyle(data WorkStyle) (err error) {
 	if data.Id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.Table("work_style").ID(data.Id).Update(&data)
+	_, err = DB.Table("work_style").Where("id=?", data.Id).Update(&data)
 	return err
 }
 func DeleteWorkStyle(id int) (err error) {
 	if id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.ID(id).Delete(&WorkStyle{})
+	_, err = DB.Where("id=?", id).Delete(&WorkStyle{})
 	return err
 }
 func GetEducation() (data []Education, err error) {
@@ -901,14 +901,14 @@ func UpdateEducation(data Education) (err error) {
 	if data.Id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.Table("education").ID(data.Id).Update(&data)
+	_, err = DB.Table("education").Where("id=?", data.Id).Update(&data)
 	return err
 }
 func DeleteEducation(id int) (err error) {
 	if id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.ID(id).Delete(&Education{})
+	_, err = DB.Where("id=?", id).Delete(&Education{})
 	return err
 }
 func GetSalary() (data []Salary, err error) {
@@ -926,14 +926,14 @@ func UpdateSalary(data Salary) (err error) {
 	if data.Id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.Table("salary").ID(data.Id).Update(&data)
+	_, err = DB.Table("salary").Where("id=?", data.Id).Update(&data)
 	return err
 }
 func DeleteSalary(id int) (err error) {
 	if id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.ID(id).Delete(&Salary{})
+	_, err = DB.Where("id=?", id).Delete(&Salary{})
 	return err
 }
 func GetIndustry() (data []Industry, err error) {
@@ -951,14 +951,14 @@ func UpdateIndustry(data Industry) (err error) {
 	if data.Id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.Table("industry").ID(data.Id).Update(&data)
+	_, err = DB.Table("industry").Where("id=?", data.Id).Update(&data)
 	return err
 }
 func DeleteIndustry(id int) (err error) {
 	if id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.ID(id).Delete(&Industry{})
+	_, err = DB.Where("id=?", id).Delete(&Industry{})
 	return err
 }
 func GetCompanyType() (data []CompanyType, err error) {
@@ -976,14 +976,14 @@ func UpdateCompanyType(data CompanyType) (err error) {
 	if data.Id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.Table("company_type").ID(data.Id).Update(&data)
+	_, err = DB.Table("company_type").Where("id=?", data.Id).Update(&data)
 	return err
 }
 func DeleteCompanyType(id int) (err error) {
 	if id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.ID(id).Delete(&CompanyType{})
+	_, err = DB.Where("id=?", id).Delete(&CompanyType{})
 	return err
 }
 func GetCountry() (data []Country, err error) {
@@ -1001,14 +1001,14 @@ func UpdateCountry(data Country) (err error) {
 	if data.Id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.Table("country").ID(data.Id).Update(&data)
+	_, err = DB.Table("country").Where("id=?", data.Id).Update(&data)
 	return err
 }
 func DeleteCountry(id int) (err error) {
 	if id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.ID(id).Delete(&Country{})
+	_, err = DB.Where("id=?", id).Delete(&Country{})
 	return err
 }
 func GetJapanCity() (data []JapanCity, err error) {
@@ -1026,14 +1026,14 @@ func UpdateJapanCity(data JapanCity) (err error) {
 	if data.Id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.Table("japan_city").ID(data.Id).Update(&data)
+	_, err = DB.Table("japan_city").Where("id=?", data.Id).Update(&data)
 	return err
 }
 func DeleteJapanCity(id int) (err error) {
 	if id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.ID(id).Delete(&JapanCity{})
+	_, err = DB.Where("id=?", id).Delete(&JapanCity{})
 	return err
 }
 
@@ -1052,7 +1052,7 @@ func UpdateUITranslate(data UITranslate) (err error) {
 	if data.Id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.Table("translate").ID(data.Id).Update(&data)
+	_, err = DB.Table("translate").Where("id=?", data.Id).Update(&data)
 	return err
 }
 
@@ -1062,7 +1062,7 @@ func DeleteUITranslate(id int) (err error) {
 	if id == 0 {
 		return errors.New("id can not empty")
 	}
-	_, err = DB.ID(id).Delete(&Translate{})
+	_, err = DB.Where("id=?", id).Delete(&Translate{})
 	return err
 }
 
