@@ -127,6 +127,28 @@ Response
 #### 说明
 status 0 正常 1 错误
 
+### 修改该下拉分类下面的某个翻译内容
+URL: http://dev.talentpool.co.jp/uitranslate/update/selectcategorybyclassid
+
+Method: POST
+```
+{
+    "id":1,
+    "english":"Full Time",
+    "japanese":"正社員",
+    "classid":5
+}
+```
+Response
+```
+{
+    "msg": "ok",
+    "status": 0
+}
+```
+#### 说明
+classid 分类id
+
 ### 获取界面翻译分类 目前显示10个预留了几十个
 URL：https://dev.talentpool.co.jp/uitranslate/get/uicategorylist
 
