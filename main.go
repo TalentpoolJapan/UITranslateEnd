@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -61,11 +62,21 @@ func main() {
 		// 1 下拉选项翻译固定，有自己的结构需要单独处理
 		// 2 界面语言预留100个分类这里面的结构体是一样的
 		// 3 Jobcategory工作分类需要单独拉出来做界面因为结构体不一样
-		authorized.GET("/get/category", GetTranslateCategory)
+		authorized.GET("/get/selectcategorylist", GetTranslateSelectCategory)
+		authorized.GET("/get/uicategorylist", GetTranslateUICategory)
 		// 修改分类列表
-		authorized.POST("/update/category", UpdateTranslateCategory)
+		authorized.POST("/update/selectcategorylist", UpdateTranslateCategory)
+		authorized.POST("/update/uicategorylist", UpdateTranslateCategory)
 		// 获取分类下面的翻译内容
-		authorized.GET("/get/category/classid/:id", GetTranslateByClassid)
+		authorized.GET("/get/selectcategorylist/classid/:id", GetTranslateSelectByClassid)
+		authorized.POST("/add/selectcategorybyclassid", AddTranslateSelectByClassid)
+		authorized.POST("/update/selectcategorybyclassid", UpdateTranslateSelectByClassid)
+		authorized.POST("/delete/selectcategorybyclassid", DeleteTranslateSelectByClassid)
+
+		authorized.GET("/get/uicategorylist/classid/:id", GetTranslateUIByClassid)
+		authorized.POST("/add/uicategorybyclassid", AddTranslateUIByClassid)
+		authorized.POST("/update/uicategorybyclassid", UpdateTranslateUIByClassid)
+		authorized.POST("/delete/uicategorybyclassid", DeleteTranslateUIByClassid)
 
 		authorized.GET("/get/jobcategoryclass", GetJobCategoryClass)
 		authorized.GET("/get/jobcategorysubclass/:id", GetJobCategorySubClass)
@@ -89,9 +100,18 @@ type TranslateClass struct {
 	Tag       string `json:"tag" binding:"required"`
 }
 
-func GetTranslateCategory(c *gin.Context) {
+func GetTranslateSelectCategory(c *gin.Context) {
 	var _TranslateClass []TranslateClass
-	err := DB.Where("id>=? and id<?", 5, 110).Find(&_TranslateClass)
+	err := DB.Where("id>=? and id<?", 5, 14).Find(&_TranslateClass)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error(), "data": _TranslateClass})
+		return
+	}
+	c.JSON(200, gin.H{"status": 0, "msg": "", "data": _TranslateClass})
+}
+func GetTranslateUICategory(c *gin.Context) {
+	var _TranslateClass []TranslateClass
+	err := DB.Where("id>=? and id<?", 100, 110).Find(&_TranslateClass)
 	if err != nil {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error(), "data": _TranslateClass})
 		return
@@ -132,64 +152,75 @@ type JobCategory struct {
 
 // ////以下是独立结构表
 type Industry struct {
-	Id         int    `json:"id" binding:"required"`
+	Id         int    `json:"id"`
 	IndustryEn string `json:"english" binding:"required"`
 	IndustryJa string `json:"japanese" binding:"required"`
 }
 type CompanyType struct {
-	Id            int    `json:"id" binding:"required"`
+	Id            int    `json:"id"`
 	CompanyTypeEn string `json:"english" binding:"required"`
 	CompanyTypeJa string `json:"japanese" binding:"required"`
 }
 type Country struct {
-	Id        int    `json:"id" binding:"required"`
+	Id        int    `json:"id"`
 	CountryEn string `json:"english" binding:"required"`
 	CountryJa string `json:"japanese" binding:"required"`
 }
 type Education struct {
-	Id     int    `json:"id" binding:"required"`
+	Id     int    `json:"id"`
 	NameEn string `json:"english" binding:"required"`
 	NameJa string `json:"japanese" binding:"required"`
 }
 type JobType struct {
-	Id     int    `json:"id" binding:"required"`
+	Id     int    `json:"id"`
 	NameEn string `json:"english" binding:"required"`
 	NameJa string `json:"japanese" binding:"required"`
 }
 type Languages struct {
-	Id     int    `json:"id" binding:"required"`
+	Id     int    `json:"id"`
 	NameEn string `json:"english" binding:"required"`
 	NameJa string `json:"japanese" binding:"required"`
 }
 type WorkStyle struct {
-	Id     int    `json:"id" binding:"required"`
+	Id     int    `json:"id"`
 	NameEn string `json:"english" binding:"required"`
 	NameJa string `json:"japanese" binding:"required"`
 }
 type Salary struct {
-	Id     int    `json:"id" binding:"required"`
+	Id     int    `json:"id"`
 	NameEn string `json:"english" binding:"required"`
 	NameJa string `json:"japanese" binding:"required"`
 }
 type WorkExp struct {
-	Id     int    `json:"id" binding:"required"`
+	Id     int    `json:"id"`
 	NameEn string `json:"english" binding:"required"`
 	NameJa string `json:"japanese" binding:"required"`
 }
 type JapanCity struct {
-	Id     int    `json:"id" binding:"required"`
+	Id     int    `json:"id"`
 	NameEn string `json:"english" binding:"required"`
 	NameJa string `json:"japanese" binding:"required"`
 }
 
 // /////////////////这部分对应网页界面语言////////////////////////
 type UITranslate struct {
-	Id       int    `json:"id" binding:"required"`
-	Transkey string `json:"transkey" binding:"required"`
+	Id       int    `json:"id"`
+	Transkey string `json:"transkey"`
 	English  string `json:"english" binding:"required"`
 	Japanese string `json:"japanese" binding:"required"`
 	Classid  int    `json:"classid" binding:"required"`
 }
+
+/////////////////////////////////////////////
+
+type CommonSelect struct {
+	Id      int    `json:"id"`
+	NameEn  string `json:"english" binding:"required"`
+	NameJa  string `json:"japanese" binding:"required"`
+	Classid int    `json:"classid" binding:"required"`
+}
+
+/////////////////////////////////////////////
 
 // /////////////////JobCategory///////////////////////
 // 获取工作一级分类
@@ -337,7 +368,7 @@ func DeleteJobCategoryClass(c *gin.Context) {
 	if len(_JobCategory) > 1 {
 		c.JSON(200, gin.H{"status": 1, "msg": "delete subclass first"})
 	}
-	_, err = DB.Table("job_category").ID(_RemoveJobCategoryClass.Id).Where("parentid=0").Delete(&JobCategory{})
+	_, err = DB.ID(_RemoveJobCategoryClass.Id).Where("parentid=0").Delete(&JobCategory{})
 	if err != nil {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
 		return
@@ -357,7 +388,7 @@ func DeleteJobCategorySubClass(c *gin.Context) {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
 		return
 	}
-	_, err = DB.Table("job_category").ID(_RemoveJobCategorySubClass.Id).Where("parentid!=0").Delete(&JobCategory{})
+	_, err = DB.ID(_RemoveJobCategorySubClass.Id).Where("parentid!=0").Delete(&JobCategory{})
 	if err != nil {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
 		return
@@ -368,7 +399,7 @@ func DeleteJobCategorySubClass(c *gin.Context) {
 ////////////////////////////////////////////////////
 
 // //////////////////////////////////////////////////////////////
-func GetTranslateByClassid(c *gin.Context) {
+func GetTranslateSelectByClassid(c *gin.Context) {
 	var _GetTranslateClassid GetTranslateClassid
 	err := c.ShouldBindUri(&_GetTranslateClassid)
 	if err != nil {
@@ -457,15 +488,275 @@ func GetTranslateByClassid(c *gin.Context) {
 		c.JSON(200, gin.H{"status": 0, "msg": "", "data": data})
 		return
 	}
-	//if classid == 14 {
-	// data, err := GetJobCategory()
-	// if err != nil {
-	// 	c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
-	// 	return
-	// }
-	// c.JSON(200, gin.H{"status": 0, "msg": "", "data": data})
-	// return
-	//}
+	c.JSON(200, gin.H{"status": 1, "msg": "ID not in range"})
+}
+
+func AddTranslateSelectByClassid(c *gin.Context) {
+	var _CommonSelect CommonSelect
+	err := c.ShouldBindJSON(&_CommonSelect)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	classid := _CommonSelect.Classid
+	if classid < 5 || classid > 13 {
+		c.JSON(200, gin.H{"status": 1, "msg": "ID not in range"})
+		return
+	}
+	if classid == 5 {
+		err := AddJobType(JobType{NameEn: _CommonSelect.NameEn, NameJa: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 6 {
+		err := AddLanguages(Languages{NameEn: _CommonSelect.NameEn, NameJa: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 7 {
+		err := AddWorkStyle(WorkStyle{NameEn: _CommonSelect.NameEn, NameJa: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 8 {
+		err := AddEducation(Education{NameEn: _CommonSelect.NameEn, NameJa: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 9 {
+		err := AddSalary(Salary{NameEn: _CommonSelect.NameEn, NameJa: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 10 {
+		err := AddIndustry(Industry{IndustryEn: _CommonSelect.NameEn, IndustryJa: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 11 {
+		err := AddCompanyType(CompanyType{CompanyTypeEn: _CommonSelect.NameEn, CompanyTypeJa: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 12 {
+		err := AddCountry(Country{CountryEn: _CommonSelect.NameEn, CountryJa: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 13 {
+		err := AddJapanCity(JapanCity{NameEn: _CommonSelect.NameEn, NameJa: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+}
+
+func UpdateTranslateSelectByClassid(c *gin.Context) {
+	var _CommonSelect CommonSelect
+	err := c.ShouldBindJSON(&_CommonSelect)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	classid := _CommonSelect.Classid
+	if classid < 5 || classid > 13 {
+		c.JSON(200, gin.H{"status": 1, "msg": "ID not in range"})
+		return
+	}
+	if classid == 5 {
+		err := UpdateJobType(JobType{Id: _CommonSelect.Id, NameEn: _CommonSelect.NameEn, NameJa: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 6 {
+		err := UpdateLanguages(Languages{Id: _CommonSelect.Id, NameEn: _CommonSelect.NameEn, NameJa: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 7 {
+		err := UpdateWorkStyle(WorkStyle{Id: _CommonSelect.Id, NameEn: _CommonSelect.NameEn, NameJa: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 8 {
+		err := UpdateEducation(Education{Id: _CommonSelect.Id, NameEn: _CommonSelect.NameEn, NameJa: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 9 {
+		err := UpdateSalary(Salary{Id: _CommonSelect.Id, NameEn: _CommonSelect.NameEn, NameJa: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 10 {
+		err := UpdateIndustry(Industry{Id: _CommonSelect.Id, IndustryEn: _CommonSelect.NameEn, IndustryJa: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 11 {
+		err := UpdateCompanyType(CompanyType{Id: _CommonSelect.Id, CompanyTypeEn: _CommonSelect.NameEn, CompanyTypeJa: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 12 {
+		err := UpdateCountry(Country{Id: _CommonSelect.Id, CountryEn: _CommonSelect.NameEn, CountryJa: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 13 {
+		err := UpdateJapanCity(JapanCity{Id: _CommonSelect.Id, NameJa: _CommonSelect.NameEn, NameEn: _CommonSelect.NameJa})
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+}
+
+func DeleteTranslateSelectByClassid(c *gin.Context) {
+	var _CommonSelect CommonSelect
+	err := c.ShouldBindJSON(&_CommonSelect)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	classid := _CommonSelect.Classid
+	if classid < 5 || classid > 13 {
+		c.JSON(200, gin.H{"status": 1, "msg": "ID not in range"})
+		return
+	}
+	if classid == 5 {
+		err := DeleteJobType(_CommonSelect.Id)
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 6 {
+		err := DeleteLanguages(_CommonSelect.Id)
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 7 {
+		err := DeleteWorkStyle(_CommonSelect.Id)
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 8 {
+		err := DeleteEducation(_CommonSelect.Id)
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 9 {
+		err := DeleteSalary(_CommonSelect.Id)
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 10 {
+		err := DeleteIndustry(_CommonSelect.Id)
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 11 {
+		err := DeleteCompanyType(_CommonSelect.Id)
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 12 {
+		err := DeleteCountry(_CommonSelect.Id)
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+	if classid == 13 {
+		err := DeleteJapanCity(_CommonSelect.Id)
+		if err != nil {
+			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+	}
+}
+
+func GetTranslateUIByClassid(c *gin.Context) {
+	var _GetTranslateClassid GetTranslateClassid
+	err := c.ShouldBindUri(&_GetTranslateClassid)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	classid := _GetTranslateClassid.ID
 	if classid >= 100 {
 		data, err := GetUITranslate(classid)
 		if err != nil {
@@ -477,6 +768,48 @@ func GetTranslateByClassid(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{"status": 1, "msg": "ID not in range"})
 }
+func AddTranslateUIByClassid(c *gin.Context) {
+	var _UITranslate UITranslate
+	err := c.ShouldBindJSON(&_UITranslate)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	err = AddUITranslate(_UITranslate)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+}
+func UpdateTranslateUIByClassid(c *gin.Context) {
+	var _UITranslate UITranslate
+	err := c.ShouldBindJSON(&_UITranslate)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	err = UpdateUITranslate(_UITranslate)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+}
+func DeleteTranslateUIByClassid(c *gin.Context) {
+	var _UITranslate UITranslate
+	err := c.ShouldBindJSON(&_UITranslate)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	err = DeleteUITranslate(_UITranslate.Id)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"status": 0, "msg": "ok"})
+}
 
 func GetJobType() (data []JobType, err error) {
 	err = DB.Table("job_type").Find(&data)
@@ -485,12 +818,48 @@ func GetJobType() (data []JobType, err error) {
 	}
 	return data, nil
 }
+func AddJobType(data JobType) (err error) {
+	_, err = DB.Table("job_type").Insert(&data)
+	return err
+}
+func UpdateJobType(data JobType) (err error) {
+	if data.Id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.Table("job_type").ID(data.Id).Update(&data)
+	return err
+}
+func DeleteJobType(id int) (err error) {
+	if id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.ID(id).Delete(&JobType{})
+	return err
+}
 func GetLanguages() (data []Languages, err error) {
 	err = DB.Table("languages").Find(&data)
 	if err != nil {
 		return data, err
 	}
 	return data, nil
+}
+func AddLanguages(data Languages) (err error) {
+	_, err = DB.Table("languages").Insert(&data)
+	return err
+}
+func UpdateLanguages(data Languages) (err error) {
+	if data.Id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.Table("languages").ID(data.Id).Update(&data)
+	return err
+}
+func DeleteLanguages(id int) (err error) {
+	if id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.ID(id).Delete(&Languages{})
+	return err
 }
 func GetWorkStyle() (data []WorkStyle, err error) {
 	err = DB.Table("work_style").Find(&data)
@@ -499,12 +868,48 @@ func GetWorkStyle() (data []WorkStyle, err error) {
 	}
 	return data, nil
 }
+func AddWorkStyle(data WorkStyle) (err error) {
+	_, err = DB.Table("work_style").Insert(&data)
+	return err
+}
+func UpdateWorkStyle(data WorkStyle) (err error) {
+	if data.Id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.Table("work_style").ID(data.Id).Update(&data)
+	return err
+}
+func DeleteWorkStyle(id int) (err error) {
+	if id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.ID(id).Delete(&WorkStyle{})
+	return err
+}
 func GetEducation() (data []Education, err error) {
 	err = DB.Table("education").Find(&data)
 	if err != nil {
 		return data, err
 	}
 	return data, nil
+}
+func AddEducation(data Education) (err error) {
+	_, err = DB.Table("education").Insert(&data)
+	return err
+}
+func UpdateEducation(data Education) (err error) {
+	if data.Id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.Table("education").ID(data.Id).Update(&data)
+	return err
+}
+func DeleteEducation(id int) (err error) {
+	if id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.ID(id).Delete(&Education{})
+	return err
 }
 func GetSalary() (data []Salary, err error) {
 	err = DB.Table("salary").Find(&data)
@@ -513,12 +918,48 @@ func GetSalary() (data []Salary, err error) {
 	}
 	return data, nil
 }
+func AddSalary(data Salary) (err error) {
+	_, err = DB.Table("salary").Insert(&data)
+	return err
+}
+func UpdateSalary(data Salary) (err error) {
+	if data.Id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.Table("salary").ID(data.Id).Update(&data)
+	return err
+}
+func DeleteSalary(id int) (err error) {
+	if id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.ID(id).Delete(&Salary{})
+	return err
+}
 func GetIndustry() (data []Industry, err error) {
 	err = DB.Table("industry").Find(&data)
 	if err != nil {
 		return data, err
 	}
 	return data, nil
+}
+func AddIndustry(data Industry) (err error) {
+	_, err = DB.Table("industry").Insert(&data)
+	return err
+}
+func UpdateIndustry(data Industry) (err error) {
+	if data.Id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.Table("industry").ID(data.Id).Update(&data)
+	return err
+}
+func DeleteIndustry(id int) (err error) {
+	if id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.ID(id).Delete(&Industry{})
+	return err
 }
 func GetCompanyType() (data []CompanyType, err error) {
 	err = DB.Table("company_type").Find(&data)
@@ -527,12 +968,48 @@ func GetCompanyType() (data []CompanyType, err error) {
 	}
 	return data, nil
 }
+func AddCompanyType(data CompanyType) (err error) {
+	_, err = DB.Table("company_type").Insert(&data)
+	return err
+}
+func UpdateCompanyType(data CompanyType) (err error) {
+	if data.Id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.Table("company_type").ID(data.Id).Update(&data)
+	return err
+}
+func DeleteCompanyType(id int) (err error) {
+	if id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.ID(id).Delete(&CompanyType{})
+	return err
+}
 func GetCountry() (data []Country, err error) {
 	err = DB.Table("country").Find(&data)
 	if err != nil {
 		return data, err
 	}
 	return data, nil
+}
+func AddCountry(data Country) (err error) {
+	_, err = DB.Table("country").Insert(&data)
+	return err
+}
+func UpdateCountry(data Country) (err error) {
+	if data.Id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.Table("country").ID(data.Id).Update(&data)
+	return err
+}
+func DeleteCountry(id int) (err error) {
+	if id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.ID(id).Delete(&Country{})
+	return err
 }
 func GetJapanCity() (data []JapanCity, err error) {
 	err = DB.Table("japan_city").Find(&data)
@@ -541,20 +1018,52 @@ func GetJapanCity() (data []JapanCity, err error) {
 	}
 	return data, nil
 }
+func AddJapanCity(data JapanCity) (err error) {
+	_, err = DB.Table("japan_city").Insert(&data)
+	return err
+}
+func UpdateJapanCity(data JapanCity) (err error) {
+	if data.Id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.Table("japan_city").ID(data.Id).Update(&data)
+	return err
+}
+func DeleteJapanCity(id int) (err error) {
+	if id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.ID(id).Delete(&JapanCity{})
+	return err
+}
 
-//	func GetJobCategory() (data []JobCategory, err error) {
-//		err = DB.Table("job_category").Find(&data)
-//		if err != nil {
-//			return data, err
-//		}
-//		return data, nil
-//	}
-func GetUITranslate(id int) (data []UITranslate, err error) {
-	err = DB.Table("translate").Where("classid=?", id).Find(&data)
+func GetUITranslate(classid int) (data []UITranslate, err error) {
+	err = DB.Table("translate").Where("classid=?", classid).Find(&data)
 	if err != nil {
 		return data, err
 	}
 	return data, nil
+}
+func AddUITranslate(data UITranslate) (err error) {
+	_, err = DB.Table("translate").Insert(&data)
+	return err
+}
+func UpdateUITranslate(data UITranslate) (err error) {
+	if data.Id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.Table("translate").ID(data.Id).Update(&data)
+	return err
+}
+
+type Translate struct{}
+
+func DeleteUITranslate(id int) (err error) {
+	if id == 0 {
+		return errors.New("id can not empty")
+	}
+	_, err = DB.ID(id).Delete(&Translate{})
+	return err
 }
 
 // +----+--------------+------------------+
