@@ -64,6 +64,28 @@ tag 代表可以通过 https://dev.talentpool.co.jp/i18n/{tag}.json 访问到jso
 
 status 0 正常 1 错误
 
+### 修改下拉列表翻译分类 (json全字段提交)
+URL:https://dev.talentpool.co.jp/uitranslate/update/selectcategorylist
+
+METHOD: POST
+
+```
+{
+    "id":11,
+    "classname":"CompanyType",
+    "tag":"companyType"
+}
+```
+RESPONSE
+```
+{
+    "msg": "",
+    "status": 0
+}
+```
+#### 说明
+status 0 正常 1 错误
+
 ### 获取界面翻译分类 目前显示10个预留了几十个
 URL：https://dev.talentpool.co.jp/uitranslate/get/uicategorylist
 
@@ -135,4 +157,25 @@ tag 代表可以通过 http://dev.talentpool.co.jp/i18nUI/{classname}.json 访�
 
 tag 代表可以通过 http://dev.talentpool.co.jp/i18nUI/{classname}_{tag}.json 访问到json格式翻译
 
+### 修改界面翻译分类 (json全字段提交)
+URL:https://dev.talentpool.co.jp/uitranslate/get/uicategorylist
+
+METHOD: POST
+
+```
+{
+    "id":100,
+    "classname":"s1",
+    "tag":"home"
+}
+```
+RESPONSE
+```
+{
+    "msg": "",
+    "status": 0
+}
+```
+#### 说明
+classname 请原样提交
 status 0 正常 1 错误
