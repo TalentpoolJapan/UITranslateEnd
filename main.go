@@ -264,8 +264,9 @@ func GetJobCategorySubClass(c *gin.Context) {
 
 // 添加工作一级分类
 type InsertJobCategoryClass struct {
-	NameEn string `json:"english" binding:"required"`
-	NameJa string `json:"japanese" binding:"required"`
+	Parentid int    `json:"parentid"`
+	NameEn   string `json:"english" binding:"required"`
+	NameJa   string `json:"japanese" binding:"required"`
 }
 
 func AddJobCategoryClass(c *gin.Context) {
