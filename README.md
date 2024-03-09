@@ -688,3 +688,57 @@ RESPONSE
     "status": 0
 }
 ```
+
+### 翻译 —— 英文转日文
+URL: http://dev.talentpool.co.jp/uitranslate/en2ja
+
+Method: POST
+```
+{
+    "text":"hello world"
+}
+```
+RESPONSE
+```
+{
+    "data": {
+        "translations": [
+            {
+                "detected_source_language": "EN",
+                "text": "ハローワールド"
+            }
+        ]
+    },
+    "msg": "ok",
+    "status": 0
+}
+```
+#### 说明
+text 翻译结果
+
+### 翻译 —— 日文转英文
+URL: http://dev.talentpool.co.jp/uitranslate/ja2en
+
+Method: POST
+```
+{
+    "text":"ハローワールド"
+}
+```
+RESPONSE
+```
+{
+    "data": {
+        "translations": [
+            {
+                "detected_source_language": "JA",
+                "text": "Hello World"
+            }
+        ]
+    },
+    "msg": "ok",
+    "status": 0
+}
+```
+#### 说明
+text 翻译结果
