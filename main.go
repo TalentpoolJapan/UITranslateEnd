@@ -52,7 +52,7 @@ func main() {
 	DB.ShowSQL(true)
 	r := gin.Default()
 	r.Use(Cors())
-	authorized := r.Group("/translate")
+	authorized := r.Group("/uitranslate")
 	authorized.Use(AuthRequired())
 	{
 		// 获取翻译分类列表
