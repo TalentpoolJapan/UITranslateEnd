@@ -801,8 +801,14 @@ func UpdateTranslateUIByClassid(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{"status": 0, "msg": "ok"})
 }
+
+type UITranslateDelete struct {
+	Id      int `json:"id"`
+	Classid int `json:"classid" binding:"required"`
+}
+
 func DeleteTranslateUIByClassid(c *gin.Context) {
-	var _UITranslate UITranslate
+	var _UITranslate UITranslateDelete
 	err := c.ShouldBindJSON(&_UITranslate)
 	if err != nil {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
