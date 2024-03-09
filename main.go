@@ -241,7 +241,7 @@ func GetJobCategoryClass(c *gin.Context) {
 
 // 获取工作二级分类
 type JobCategorySubClass struct {
-	Parentid int `uri:"parentid"`
+	Parentid int `uri:"id" bindind:"required"`
 }
 
 func GetJobCategorySubClass(c *gin.Context) {
