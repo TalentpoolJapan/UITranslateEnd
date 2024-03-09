@@ -220,6 +220,11 @@ type CommonSelect struct {
 	Classid int    `json:"classid" binding:"required"`
 }
 
+type CommonSelectDelete struct {
+	Id      int `json:"id"`
+	Classid int `json:"classid" binding:"required"`
+}
+
 /////////////////////////////////////////////
 
 // /////////////////JobCategory///////////////////////
@@ -664,7 +669,7 @@ func UpdateTranslateSelectByClassid(c *gin.Context) {
 }
 
 func DeleteTranslateSelectByClassid(c *gin.Context) {
-	var _CommonSelect CommonSelect
+	var _CommonSelect CommonSelectDelete
 	err := c.ShouldBindJSON(&_CommonSelect)
 	if err != nil {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
