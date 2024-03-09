@@ -1,9 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -16,7 +20,8 @@ var (
 	//EEpLWKlYixYtYGSx
 	//MYSQL_HOST    = "tcp(192.168.1.165:3306)"
 	//MYSQL_SECRECT = "a"
-	MYSQL_DB = "talentpool"
+	MYSQL_DB           = "talentpool"
+	DEEPL_FREE_API_KEY = "ed8fb40e-858f-7167-44c8-65ec333131c2:fx"
 
 	DB, _ = xorm.NewEngine("mysql", fmt.Sprintf("root:%s@%s/%s?charset=utf8", MYSQL_SECRECT, MYSQL_HOST, MYSQL_DB))
 )
@@ -86,6 +91,9 @@ func main() {
 		authorized.POST("/add/jobcategorysubclass", AddJobCategorySubClass)
 		authorized.POST("/delete/jobcategoryclass", DeleteJobCategoryClass)
 		authorized.POST("/delete/jobcategorysubclass", DeleteJobCategorySubClass)
+
+		authorized.POST("/en2ja", TranslateEnglishToJapanese)
+		authorized.POST("/ja2en", TranslateJapaneseToEnglish)
 
 	}
 
@@ -1092,3 +1100,123 @@ func DeleteUITranslate(id int) (err error) {
 // | 13 | JapaneseCity | japanList        | => japan_city
 // | 14 | Jobcategory  | allJobcategories | => job_category
 // +----+--------------+------------------+
+
+// //////////////DEEPL//////////////////
+type DeepLRequest struct {
+	Text        []string `json:"text"`
+	TargetLang  string   `json:"target_lang"`
+	Format      bool     `json:"preserve_formatting"`
+	TagHandling string   `json:"tag_handling"`
+}
+
+type DeepLResponse struct {
+	Translations []DeepLTranslations `json:"translations"`
+}
+
+type DeepLTranslations struct {
+	DetectedSourceLanguage string `json:"detected_source_language"`
+	Text                   string `json:"text"`
+}
+
+func TranslateByDeepL(target string, text ...string) (DeepLResponse, error) {
+	var source string
+	for _, v := range text {
+		source += v
+	}
+	// lang := DetectLanguage(source)
+
+	// if lang == "" {
+	// 	return DeepLResponse{}, msg.DETECT_SOURCE_LANGUAGE_ERR
+	// }
+	// var target string
+	// if lang == "JA" {
+	// 	target = "EN-US"
+	// }
+	// if lang == "EN-US" {
+	// 	target = "JA"
+	// }
+	data, err := json.Marshal(&DeepLRequest{
+		TargetLang:  target,
+		Text:        text,
+		Format:      true,
+		TagHandling: "xml",
+	})
+	if err != nil {
+
+	}
+	resp, errs := DoTranslateDeepL(data)
+	if errs != nil {
+		return resp, errs
+	}
+	return resp, errs
+}
+
+func DoTranslateDeepL(data []byte) (DeepLResponse, error) {
+	var _DeepLResponse DeepLResponse
+	client := &http.Client{
+		Transport: &http.Transport{
+			DisableKeepAlives: true,
+		},
+		Timeout: 10 * time.Second,
+	}
+
+	req, _ := http.NewRequest("POST", "https://api-free.deepl.com/v2/translate", strings.NewReader(string(data)))
+	req.Header.Add("Authorization", "DeepL-Auth-Key "+DEEPL_FREE_API_KEY)
+	req.Header.Add("Content-Type", "application/json")
+	resp, err := client.Do(req)
+	if err != nil {
+		return _DeepLResponse, errors.New("network error")
+	}
+	defer resp.Body.Close()
+	code := resp.StatusCode
+
+	if code != 200 {
+		if code == 429 {
+			return _DeepLResponse, errors.New("too many request")
+		} else if code == 456 {
+			return _DeepLResponse, errors.New("quota exceeded")
+		} else if code >= 500 {
+			return _DeepLResponse, errors.New("temporary error")
+		} else {
+			return _DeepLResponse, errors.New("unknown error")
+		}
+	}
+	body, _ := io.ReadAll(resp.Body)
+	json.Unmarshal(body, &_DeepLResponse)
+	return _DeepLResponse, nil
+}
+
+type TranslateText struct {
+	Text string `json:"text" binding:"required"`
+}
+
+func TranslateEnglishToJapanese(c *gin.Context) {
+	var _TranslateText TranslateText
+	err := c.ShouldBindJSON(&_TranslateText)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	data, err := TranslateByDeepL("JA", _TranslateText.Text)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"status": 0, "msg": "ok", "data": data})
+}
+func TranslateJapaneseToEnglish(c *gin.Context) {
+	var _TranslateText TranslateText
+	err := c.ShouldBindJSON(&_TranslateText)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+	data, err := TranslateByDeepL("EN-US", _TranslateText.Text)
+	if err != nil {
+		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"status": 0, "msg": "ok", "data": data})
+}
