@@ -1,6 +1,8 @@
 ### 获取全部下拉列表翻译分类
 URL：https://dev.talentpool.co.jp/uitranslate/get/selectcategorylist
+
 Method：Get
+
 Response:
 ```
 {
@@ -62,7 +64,9 @@ status 0 正常 1 错误
 
 ### 获取界面翻译分类 目前显示10个预留了几十个
 URL：https://dev.talentpool.co.jp/uitranslate/get/uicategorylist
+
 Method：Get
+
 Response:
 ```
 {
