@@ -1,4 +1,4 @@
-###获取全部下拉列表翻译分类
+### 获取全部下拉列表翻译分类
 URL：https://dev.talentpool.co.jp/uitranslate/get/selectcategorylist
 Method：Get
 Response:
@@ -55,12 +55,12 @@ Response:
     "status": 0
 }
 ```
-####说明
+#### 说明
 classname 分类名称
 tag 代表可以通过 https://dev.talentpool.co.jp/i18n/{tag}.json 访问到json格式翻译
 status 0 正常 1 错误
 
-###获取界面翻译分类 目前显示10个预留了几十个
+### 获取界面翻译分类 目前显示10个预留了几十个
 URL：https://dev.talentpool.co.jp/uitranslate/get/uicategorylist
 Method：Get
 Response:
@@ -122,7 +122,7 @@ Response:
     "status": 0
 }
 ```
-####说明
+#### 说明
 classname 分类名称 这部分的classname禁止修改，仅可以修改tag 修改的时候不要传classname
 tag 代表可以通过 http://dev.talentpool.co.jp/i18nUI/{classname}.json 访问到json格式翻译
 tag 代表可以通过 http://dev.talentpool.co.jp/i18nUI/{classname}_{tag}.json 访问到json格式翻译
