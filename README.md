@@ -149,6 +149,42 @@ Response
 #### 说明
 classid 分类id
 
+### 新增该下拉分类下面的某个翻译内容
+URL: https://dev.talentpool.co.jp/uitranslate/add/selectcategorybyclassid
+
+Method: POST
+```
+{
+    "english":"Full Time",
+    "japanese":"正社員",
+    "classid":5
+}
+```
+Response
+```
+{
+    "msg": "ok",
+    "status": 0
+}
+```
+### 删除该下拉分类下面的某个翻译内容
+URL: https://dev.talentpool.co.jp/uitranslate/delete/selectcategorybyclassid
+
+Method: POST
+```
+{
+    "id":8,
+    "classid":5
+}
+```
+Response
+```
+{
+    "msg": "ok",
+    "status": 0
+}
+```
+
 ### 获取界面翻译分类 目前显示10个预留了几十个
 URL：https://dev.talentpool.co.jp/uitranslate/get/uicategorylist
 
