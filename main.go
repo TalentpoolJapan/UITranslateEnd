@@ -29,6 +29,7 @@ var (
 // 设置跨域请求
 func Cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		fmt.Println(c.Request.Header)
 		method := c.Request.Method
 		origin := c.Request.Header.Get("Origin")
 		if origin != "" {
