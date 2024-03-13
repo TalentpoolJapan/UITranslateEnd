@@ -1,6 +1,6 @@
 ### 增删改以后请访问
-https://dev.talentpool.co.jp/i18no/rebuild 进行重塑
-
+~~https://dev.talentpool.co.jp/i18no/rebuild 进行重塑
+移除rebuild重塑ID序列放在refresh里面
 https://dev.talentpool.co.jp/i18no/refresh 进行缓存刷新
 
 ### 获取全部下拉列表翻译分类
