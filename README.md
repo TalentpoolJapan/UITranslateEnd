@@ -1,5 +1,5 @@
 ### 增删改以后请访问
-~~https://dev.talentpool.co.jp/i18no/rebuild 进行重塑
+~~https://dev.talentpool.co.jp/i18no/rebuild 进行重塑~~
 
 移除rebuild重塑ID序列放在refresh里面
 
