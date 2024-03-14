@@ -157,6 +157,7 @@ type JobCategory struct {
 	NameEn   string `json:"english" binding:"required"`
 	NameJa   string `json:"japanese" binding:"required"`
 	Parentid int    `json:"parentid"`
+	Orderid  int    `json:"orderid"`
 }
 
 // ////以下是独立结构表
@@ -206,9 +207,10 @@ type WorkExp struct {
 	NameJa string `json:"japanese" binding:"required"`
 }
 type JapanCity struct {
-	Id     int    `json:"id"`
-	NameEn string `json:"english" binding:"required"`
-	NameJa string `json:"japanese" binding:"required"`
+	Id      int    `json:"id"`
+	NameEn  string `json:"english" binding:"required"`
+	NameJa  string `json:"japanese" binding:"required"`
+	Orderid int    `json:"orderid"`
 }
 
 // /////////////////这部分对应网页界面语言////////////////////////
@@ -227,6 +229,7 @@ type CommonSelect struct {
 	NameEn  string `json:"english" binding:"required"`
 	NameJa  string `json:"japanese" binding:"required"`
 	Classid int    `json:"classid" binding:"required"`
+	Orderid int    `json:"orderid,omitempty"`
 }
 
 type CommonSelectDelete struct {
@@ -240,7 +243,7 @@ type CommonSelectDelete struct {
 // 获取工作一级分类
 func GetJobCategoryClass(c *gin.Context) {
 	var _JobCategory []JobCategory
-	err := DB.Table("job_category").Where("parentid=?", 0).Find(&_JobCategory)
+	err := DB.Table("job_category").Where("parentid=?", 0).Asc("orderid").Find(&_JobCategory)
 	if err != nil {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
 		return
@@ -263,7 +266,7 @@ func GetJobCategorySubClass(c *gin.Context) {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
 		return
 	}
-	err = DB.Table("job_category").Where("parentid=?", _JobCategorySubClass.Parentid).Find(&_JobCategory)
+	err = DB.Table("job_category").Where("parentid=?", _JobCategorySubClass.Parentid).Asc("orderid").Find(&_JobCategory)
 	if err != nil {
 		c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
 		return
@@ -317,9 +320,10 @@ func AddJobCategorySubClass(c *gin.Context) {
 
 // 修改工作一级分类
 type UpdateJobCategoryClass struct {
-	Id     int    `json:"id" binding:"required"`
-	NameEn string `json:"english" binding:"required"`
-	NameJa string `json:"japanese" binding:"required"`
+	Id      int    `json:"id" binding:"required"`
+	NameEn  string `json:"english" binding:"required"`
+	NameJa  string `json:"japanese" binding:"required"`
+	Orderid int    `json:"orderid" binding:"required"`
 }
 
 func EditJobCategoryClass(c *gin.Context) {
@@ -343,6 +347,7 @@ type UpdateJobCategorySubClass struct {
 	NameEn   string `json:"english" binding:"required"`
 	NameJa   string `json:"japanese" binding:"required"`
 	Parentid int    `json:"parentid" binding:"required"`
+	Orderid  int    `json:"orderid" binding:"required"`
 }
 
 func EditJobCategorySubClass(c *gin.Context) {
@@ -669,7 +674,7 @@ func UpdateTranslateSelectByClassid(c *gin.Context) {
 		c.JSON(200, gin.H{"status": 0, "msg": "ok"})
 	}
 	if classid == 13 {
-		err := UpdateJapanCity(JapanCity{Id: _CommonSelect.Id, NameJa: _CommonSelect.NameEn, NameEn: _CommonSelect.NameJa})
+		err := UpdateJapanCity(JapanCity{Id: _CommonSelect.Id, NameJa: _CommonSelect.NameEn, NameEn: _CommonSelect.NameJa, Orderid: _CommonSelect.Orderid})
 		if err != nil {
 			c.JSON(200, gin.H{"status": 1, "msg": err.Error()})
 			return
@@ -1033,7 +1038,7 @@ func DeleteCountry(id int) (err error) {
 	return err
 }
 func GetJapanCity() (data []JapanCity, err error) {
-	err = DB.Table("japan_city").Find(&data)
+	err = DB.Table("japan_city").Asc("orderid").Find(&data)
 	if err != nil {
 		return data, err
 	}
