@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	"uitranslate/cms/adaptor"
+	"uitranslate/cms/infrastructure/repo"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -18,7 +20,7 @@ var (
 	MYSQL_HOST    = "tcp(127.0.0.1:3306)"
 	MYSQL_SECRECT = "yYVim5WbqzkWziNY"
 	//EEpLWKlYixYtYGSx
-	//MYSQL_HOST    = "tcp(192.168.1.165:3306)"
+	//MYSQL_HOST = "tcp(192.168.1.165:3306)"
 	//MYSQL_SECRECT = "a"
 	MYSQL_DB           = "talentpool"
 	DEEPL_FREE_API_KEY = "ed8fb40e-858f-7167-44c8-65ec333131c2:fx"
@@ -56,6 +58,7 @@ func AuthRequired() gin.HandlerFunc {
 
 func main() {
 	DB.ShowSQL(true)
+	repo.InitMysqlDB()
 	r := gin.Default()
 	r.Use(Cors())
 	authorized := r.Group("/uitranslate")
@@ -97,6 +100,8 @@ func main() {
 		authorized.POST("/ja2en", TranslateJapaneseToEnglish)
 
 	}
+
+	adaptor.RegisterHandler(r)
 
 	r.Run(":8332")
 
