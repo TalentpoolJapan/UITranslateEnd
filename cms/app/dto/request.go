@@ -27,8 +27,10 @@ type UpdateCategoryReq struct {
 }
 
 type CategoryPageReq struct {
-	Page     int64 `json:"page"`
-	PageSize int64 `json:"page_size"`
+	Page     int64  `json:"page"`
+	PageSize int64  `json:"page_size"`
+	ParentId int64  `json:"parent_id"`
+	Name     string `json:"name"`
 }
 
 func (dto *AddCategoryReq) ToCategory() *model.Category {
@@ -62,6 +64,8 @@ func (dto *CategoryPageReq) ToQuery() *param.QueryCategoryPage {
 	query := &param.QueryCategoryPage{
 		Page:     dto.Page,
 		PageSize: dto.PageSize,
+		ParentId: dto.ParentId,
+		Name:     dto.Name,
 	}
 	return query
 }

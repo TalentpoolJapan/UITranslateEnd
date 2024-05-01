@@ -37,7 +37,11 @@ func (c CategoryGatewayImpl) DeleteCategory(category *model.Category) error {
 }
 
 func (c CategoryGatewayImpl) PageCategory(param *param.QueryCategoryPage) (int64, []*model.Category, error) {
-	total, categories, err := c.repo.PageCategory(int(param.Page), int(param.PageSize))
+	wrapper := &repo.QueryWrapper{
+		ParentId: param.ParentId,
+		Name:     param.Name,
+	}
+	total, categories, err := c.repo.PageCategory(int(param.Page), int(param.PageSize), wrapper)
 	if err != nil {
 		return 0, nil, err
 	}

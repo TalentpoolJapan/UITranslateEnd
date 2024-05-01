@@ -12,21 +12,34 @@ var (
 )
 
 func RegisterHandler(engine *gin.Engine) {
+	// category
 	engine.GET("/category/page", AllCategory)
 	engine.POST("/category/add", AddCategory)
 	engine.PUT("/category/update", UpdateCategory)
+
+	//
 }
 
 func AllCategory(c *gin.Context) {
-	var err error
 	page, err := strconv.Atoi(c.Query("page"))
+	if err != nil {
+		page = 1
+	}
 	pageSize, err := strconv.Atoi(c.Query("page_size"))
 	if err != nil {
-		return
+		pageSize = 20
 	}
+	parentId, err := strconv.Atoi(c.Query("parent_id"))
+	if err != nil {
+		parentId = 0
+		// todo
+	}
+
 	var req = dto.CategoryPageReq{
 		Page:     int64(page),
 		PageSize: int64(pageSize),
+		ParentId: int64(parentId),
+		Name:     c.Query("name"),
 	}
 
 	pageCategory, bizErr := CategoryAppServ.PageCategory(req)
