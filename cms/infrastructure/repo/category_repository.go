@@ -20,12 +20,12 @@ func NewCategoryRepository() *CategoryRepository {
 }
 
 func (repo *CategoryRepository) CreateCategory(category *model.Category) (err error) {
-	_, err = MysqlDB.Table(categoryTableName).Insert(&category)
+	_, err = MysqlDB.Table(categoryTableName).Insert(po.ToPO(category))
 	return err
 }
 
 func (repo *CategoryRepository) UpdateCategory(category *model.Category) (err error) {
-	_, err = MysqlDB.Table(categoryTableName).Update(&category)
+	_, err = MysqlDB.Table(categoryTableName).Where("id = ?", category.ID).Update(po.ToPO(category))
 	return err
 }
 

@@ -14,10 +14,9 @@ var (
 func RegisterHandler(engine *gin.Engine) {
 	// category
 	engine.GET("/category/page", AllCategory)
-	engine.POST("/category/add", AddCategory)
-	engine.PUT("/category/update", UpdateCategory)
+	engine.POST("/category", AddCategory)
+	engine.PUT("/category", UpdateCategory)
 
-	//
 }
 
 func AllCategory(c *gin.Context) {

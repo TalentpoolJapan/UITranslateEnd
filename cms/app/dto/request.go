@@ -48,14 +48,15 @@ func (dto *AddCategoryReq) ToCategory() *model.Category {
 
 func (dto *UpdateCategoryReq) ToCategory() *model.Category {
 	category := &model.Category{
-		ID:        dto.ID,
-		Name:      dto.Name,
-		ParentId:  dto.ParentId,
-		Tag:       dto.Tag,
-		SortOrder: dto.SortOrder,
-		NameEn:    dto.NameEn,
-		NameJa:    dto.NameJa,
-		Status:    model.Status(dto.Status),
+		ID:         dto.ID,
+		Name:       dto.Name,
+		ParentId:   dto.ParentId,
+		Tag:        dto.Tag,
+		SortOrder:  dto.SortOrder,
+		NameEn:     dto.NameEn,
+		NameJa:     dto.NameJa,
+		Status:     model.Status(dto.Status),
+		UpdateTime: time.Now(),
 	}
 	return category
 }
