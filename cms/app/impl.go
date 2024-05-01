@@ -14,10 +14,12 @@ type CategoryApplicationServiceImpl struct {
 	gateway gateway.ICategoryGateWay
 }
 
-func NewCategoryApplicationService() *CategoryApplicationServiceImpl {
-	return &CategoryApplicationServiceImpl{
-		gateway: *infrastructure.NewCategoryGatewayImpl(),
+func (c *CategoryApplicationServiceImpl) CategoryApiData(name string) ([]*dto.CategoryDetailResp, error) {
+	categories, err := c.gateway.QueryCategoryByName(name)
+	if err != nil {
+		return nil, err
 	}
+	return dto.ToDtoList(categories), nil
 }
 
 func (c *CategoryApplicationServiceImpl) PageCategory(req dto.CategoryPageReq) (dto.CategoryPageResp, error) {
@@ -51,4 +53,10 @@ func (c *CategoryApplicationServiceImpl) UpdateCategory(req dto.UpdateCategoryRe
 		return err
 	}
 	return nil
+}
+
+func NewCategoryApplicationService() *CategoryApplicationServiceImpl {
+	return &CategoryApplicationServiceImpl{
+		gateway: *infrastructure.NewCategoryGatewayImpl(),
+	}
 }

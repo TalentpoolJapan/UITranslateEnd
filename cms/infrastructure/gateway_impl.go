@@ -15,10 +15,15 @@ type CategoryGatewayImpl struct {
 	repo *repo.CategoryRepository
 }
 
-func NewCategoryGatewayImpl() *CategoryGatewayImpl {
-	return &CategoryGatewayImpl{
-		repo: repo.NewCategoryRepository(),
+func (c CategoryGatewayImpl) QueryCategoryByName(name string) ([]*model.Category, error) {
+	wrapper := &repo.QueryWrapper{
+		Name: name,
 	}
+	categories, err := c.repo.DycQuery(wrapper)
+	if err != nil {
+		return nil, err
+	}
+	return categories, nil
 }
 
 func (c CategoryGatewayImpl) AddCategory(category *model.Category) error {
@@ -46,4 +51,10 @@ func (c CategoryGatewayImpl) PageCategory(param *param.QueryCategoryPage) (int64
 		return 0, nil, err
 	}
 	return total, categories, nil
+}
+
+func NewCategoryGatewayImpl() *CategoryGatewayImpl {
+	return &CategoryGatewayImpl{
+		repo: repo.NewCategoryRepository(),
+	}
 }

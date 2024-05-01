@@ -13,4 +13,6 @@ type ICategoryGateWay interface {
 	DeleteCategory(category *model.Category) error
 
 	PageCategory(param *param.QueryCategoryPage) (int64, []*model.Category, error)
+
+	QueryCategoryByName(name string) ([]*model.Category, error)
 }

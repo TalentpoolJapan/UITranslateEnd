@@ -51,3 +51,21 @@ func (repo *CategoryRepository) PageCategory(page int, pageSize int, wrapper *Qu
 
 	return total, po.ToEntityList(categories), nil
 }
+
+func (repo *CategoryRepository) DycQuery(wrapper *QueryWrapper) ([]*model.Category, error) {
+	var categories []*po.CategoryPO
+	//total, err := MysqlDB.Table(categoryTableName).Limit(pageSize, (page-1)*pageSize).FindAndCount(&categories)
+	table := MysqlDB.Table(categoryTableName)
+	if wrapper.ParentId != 0 {
+		table.Where("parent_id = ?", wrapper.ParentId)
+	}
+	if wrapper.Name != "" {
+		table.Where("name = ?", wrapper.Name)
+	}
+	err := table.Find(&categories)
+	if err != nil {
+		return nil, err
+	}
+
+	return po.ToEntityList(categories), nil
+}
