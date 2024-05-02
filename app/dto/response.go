@@ -1,6 +1,8 @@
 package dto
 
-import "uitranslate/cms/domain/model"
+import (
+	"uitranslate/domain/model"
+)
 
 type CategoryDetailResp struct {
 	ID        int64  `json:"id"`

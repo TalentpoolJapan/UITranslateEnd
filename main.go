@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	"uitranslate/cms/adaptor"
-	"uitranslate/cms/infrastructure/repo"
+	"uitranslate/adaptor"
+	"uitranslate/infrastructure/repo"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"

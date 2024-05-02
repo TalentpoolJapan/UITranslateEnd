@@ -1,10 +1,10 @@
 package infrastructure
 
 import (
-	"uitranslate/cms/domain/gateway"
-	"uitranslate/cms/domain/model"
-	"uitranslate/cms/domain/param"
-	"uitranslate/cms/infrastructure/repo"
+	"uitranslate/domain/gateway"
+	"uitranslate/domain/model"
+	"uitranslate/domain/param"
+	"uitranslate/infrastructure/repo"
 )
 
 var (
@@ -13,6 +13,17 @@ var (
 
 type CategoryGatewayImpl struct {
 	repo *repo.CategoryRepository
+}
+
+func (c CategoryGatewayImpl) QueryCategoryByParentId(parentId int64) ([]*model.Category, error) {
+	wrapper := &repo.QueryWrapper{
+		ParentId: parentId,
+	}
+	categories, err := c.repo.DycQuery(wrapper)
+	if err != nil {
+		return nil, err
+	}
+	return categories, nil
 }
 
 func (c CategoryGatewayImpl) QueryCategoryByName(name string) ([]*model.Category, error) {

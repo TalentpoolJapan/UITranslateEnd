@@ -3,17 +3,18 @@ package adaptor
 import (
 	"github.com/gin-gonic/gin"
 	"strconv"
-	"uitranslate/cms/app"
-	"uitranslate/cms/app/dto"
+	app2 "uitranslate/app"
+	"uitranslate/app/dto"
 )
 
 var (
-	CategoryAppServ app.ICategoryApplicationService = app.NewCategoryApplicationService()
+	CategoryAppServ app2.ICategoryApplicationService = app2.NewCategoryApplicationService()
 )
 
 func RegisterHandler(engine *gin.Engine) {
 	// category
-	engine.GET("/admin/category/page", AllCategory)
+	engine.GET("/admin/category/page", PageCategory)
+	engine.GET("/admin/category", AllCategory)
 	engine.POST("/admin/category", AddCategory)
 	engine.PUT("/admin/category", UpdateCategory)
 
@@ -21,7 +22,7 @@ func RegisterHandler(engine *gin.Engine) {
 	engine.GET("/api/category/:name", CategoryApiData)
 }
 
-func AllCategory(c *gin.Context) {
+func PageCategory(c *gin.Context) {
 	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil {
 		page = 1
@@ -48,6 +49,19 @@ func AllCategory(c *gin.Context) {
 		return
 	}
 	c.JSON(200, gin.H{"status": 0, "msg": "", "data": pageCategory})
+}
+
+func AllCategory(c *gin.Context) {
+	parentId, err := strconv.Atoi(c.Param("parent_id"))
+	if err != nil || parentId == 0 {
+		parentId = 1
+	}
+
+	categories, bizErr := CategoryAppServ.AllCategory(int64(parentId))
+	if bizErr != nil {
+		return
+	}
+	c.JSON(200, gin.H{"status": 0, "msg": "", "data": categories})
 }
 
 func AddCategory(c *gin.Context) {

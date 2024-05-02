@@ -2,8 +2,8 @@ package dto
 
 import (
 	"time"
-	"uitranslate/cms/domain/model"
-	"uitranslate/cms/domain/param"
+	"uitranslate/domain/model"
+	"uitranslate/domain/param"
 )
 
 type AddCategoryReq struct {

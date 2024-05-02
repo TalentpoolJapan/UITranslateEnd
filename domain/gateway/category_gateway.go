@@ -1,8 +1,8 @@
 package gateway
 
 import (
-	"uitranslate/cms/domain/model"
-	"uitranslate/cms/domain/param"
+	"uitranslate/domain/model"
+	"uitranslate/domain/param"
 )
 
 type ICategoryGateWay interface {
@@ -15,4 +15,6 @@ type ICategoryGateWay interface {
 	PageCategory(param *param.QueryCategoryPage) (int64, []*model.Category, error)
 
 	QueryCategoryByName(name string) ([]*model.Category, error)
+
+	QueryCategoryByParentId(parentId int64) ([]*model.Category, error)
 }

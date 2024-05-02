@@ -1,8 +1,8 @@
 package repo
 
 import (
-	"uitranslate/cms/domain/model"
-	"uitranslate/cms/infrastructure/repo/po"
+	"uitranslate/domain/model"
+	"uitranslate/infrastructure/repo/po"
 )
 
 var categoryTableName = "talentpool_category"

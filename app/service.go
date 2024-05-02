@@ -1,6 +1,8 @@
 package app
 
-import "uitranslate/cms/app/dto"
+import (
+	"uitranslate/app/dto"
+)
 
 type ICategoryApplicationService interface {
 	AddCategory(req dto.AddCategoryReq) error
@@ -8,6 +10,8 @@ type ICategoryApplicationService interface {
 	UpdateCategory(req dto.UpdateCategoryReq) error
 
 	// query
+	AllCategory(parentId int64) ([]*dto.CategoryDetailResp, error)
+
 	PageCategory(req dto.CategoryPageReq) (dto.CategoryPageResp, error)
 
 	CategoryApiData(name string) ([]*dto.CategoryDetailResp, error)

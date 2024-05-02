@@ -2,7 +2,7 @@ package po
 
 import (
 	"time"
-	"uitranslate/cms/domain/model"
+	"uitranslate/domain/model"
 )
 
 type CategoryPO struct {

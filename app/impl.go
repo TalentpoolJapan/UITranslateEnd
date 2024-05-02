@@ -1,9 +1,9 @@
 package app
 
 import (
-	"uitranslate/cms/app/dto"
-	"uitranslate/cms/domain/gateway"
-	"uitranslate/cms/infrastructure"
+	"uitranslate/app/dto"
+	"uitranslate/domain/gateway"
+	"uitranslate/infrastructure"
 )
 
 var (
@@ -12,6 +12,14 @@ var (
 
 type CategoryApplicationServiceImpl struct {
 	gateway gateway.ICategoryGateWay
+}
+
+func (c *CategoryApplicationServiceImpl) AllCategory(parentId int64) ([]*dto.CategoryDetailResp, error) {
+	categories, err := c.gateway.QueryCategoryByParentId(parentId)
+	if err != nil {
+		return nil, err
+	}
+	return dto.ToDtoList(categories), nil
 }
 
 func (c *CategoryApplicationServiceImpl) CategoryApiData(name string) ([]*dto.CategoryDetailResp, error) {
