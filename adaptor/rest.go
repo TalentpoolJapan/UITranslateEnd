@@ -3,12 +3,12 @@ package adaptor
 import (
 	"github.com/gin-gonic/gin"
 	"strconv"
-	app2 "uitranslate/app"
+	"uitranslate/app"
 	"uitranslate/app/dto"
 )
 
 var (
-	CategoryAppServ app2.ICategoryApplicationService = app2.NewCategoryApplicationService()
+	CategoryAppServ app.ICategoryApplicationService = app.NewCategoryApplicationService()
 )
 
 func RegisterHandler(engine *gin.Engine) {
