@@ -46,6 +46,28 @@ func (c CategoryGatewayImpl) QueryCategoryByName(name string) ([]*model.Category
 }
 
 func (c CategoryGatewayImpl) AddCategory(category *model.Category) error {
+	// 确认id，每个层级最多1000个
+	var newCategoryId int64
+	wrapper := &repo.QueryWrapper{
+		ParentId: category.ParentId,
+	}
+	categoryGroup, _ := c.repo.DycQuery(wrapper)
+	if len(categoryGroup) == 0 {
+		newCategoryId = category.ParentId * 1000
+	} else {
+		// 获取category group中id最大的category
+		// 初始化 maxCategory 为数组的第一个元素
+		maxCategory := categoryGroup[0]
+		// 遍历数组，比较每个 Category 的 ID，更新最大的 Category
+		for _, category := range categoryGroup {
+			if category.ID > maxCategory.ID {
+				maxCategory = category
+			}
+		}
+		newCategoryId = maxCategory.ID + 1
+	}
+
+	category.ID = newCategoryId
 	err := c.repo.CreateCategory(category)
 	return err
 }
