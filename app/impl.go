@@ -14,16 +14,24 @@ type CategoryApplicationServiceImpl struct {
 	gateway gateway.ICategoryGateWay
 }
 
-func (c *CategoryApplicationServiceImpl) AllCategory(parentId int64) ([]*dto.CategoryDetailResp, error) {
-	categories, err := c.gateway.QueryCategoryByParentId(parentId)
+func (c *CategoryApplicationServiceImpl) ListCategoryApiDataByName(name string) ([]*dto.CategoryDetailResp, error) {
+	categories, err := c.gateway.QueryCategoryByName(name)
 	if err != nil {
 		return nil, err
 	}
 	return dto.ToDtoList(categories), nil
 }
 
-func (c *CategoryApplicationServiceImpl) CategoryApiData(name string) ([]*dto.CategoryDetailResp, error) {
-	categories, err := c.gateway.QueryCategoryByName(name)
+func (c *CategoryApplicationServiceImpl) CategoryApiDataById(id int64) (*dto.CategoryDetailResp, error) {
+	category, err := c.gateway.QueryCategoryById(id)
+	if err != nil {
+		return nil, err
+	}
+	return dto.ToDto(category), err
+}
+
+func (c *CategoryApplicationServiceImpl) AllCategory(parentId int64) ([]*dto.CategoryDetailResp, error) {
+	categories, err := c.gateway.QueryCategoryByParentId(parentId)
 	if err != nil {
 		return nil, err
 	}

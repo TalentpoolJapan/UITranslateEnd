@@ -22,7 +22,7 @@ type CategoryPageResp struct {
 	Data     []*CategoryDetailResp `json:"data"`
 }
 
-func ToDto(category model.Category) *CategoryDetailResp {
+func ToDto(category *model.Category) *CategoryDetailResp {
 	dto := &CategoryDetailResp{
 		ID:        category.ID,
 		Name:      category.Name,
@@ -39,7 +39,7 @@ func ToDto(category model.Category) *CategoryDetailResp {
 func ToDtoList(categories []*model.Category) []*CategoryDetailResp {
 	var arr []*CategoryDetailResp
 	for _, category := range categories {
-		arr = append(arr, ToDto(*category))
+		arr = append(arr, ToDto(category))
 	}
 	return arr
 }

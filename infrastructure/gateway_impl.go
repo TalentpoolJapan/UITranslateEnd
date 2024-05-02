@@ -15,6 +15,14 @@ type CategoryGatewayImpl struct {
 	repo *repo.CategoryRepository
 }
 
+func (c CategoryGatewayImpl) QueryCategoryById(id int64) (*model.Category, error) {
+	category, err := c.repo.GetCategoryById(id)
+	if err != nil {
+		return nil, err
+	}
+	return category, nil
+}
+
 func (c CategoryGatewayImpl) QueryCategoryByParentId(parentId int64) ([]*model.Category, error) {
 	wrapper := &repo.QueryWrapper{
 		ParentId: parentId,

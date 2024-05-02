@@ -34,6 +34,15 @@ func (repo *CategoryRepository) DeleteCategory(id int64) error {
 	panic("implement me")
 }
 
+func (repo *CategoryRepository) GetCategoryById(id int64) (*model.Category, error) {
+	var category []*po.CategoryPO
+	err := MysqlDB.Table(categoryTableName).ID(id).Find(&category)
+	if err != nil || len(category) == 0 {
+		return nil, err
+	}
+	return category[0].ToEntity(), nil
+}
+
 func (repo *CategoryRepository) PageCategory(page int, pageSize int, wrapper *QueryWrapper) (int64, []*model.Category, error) {
 	var categories []*po.CategoryPO
 	//total, err := MysqlDB.Table(categoryTableName).Limit(pageSize, (page-1)*pageSize).FindAndCount(&categories)

@@ -14,5 +14,7 @@ type ICategoryApplicationService interface {
 
 	PageCategory(req dto.CategoryPageReq) (dto.CategoryPageResp, error)
 
-	CategoryApiData(name string) ([]*dto.CategoryDetailResp, error)
+	ListCategoryApiDataByName(name string) ([]*dto.CategoryDetailResp, error)
+
+	CategoryApiDataById(id int64) (*dto.CategoryDetailResp, error)
 }

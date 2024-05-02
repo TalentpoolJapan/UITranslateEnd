@@ -14,12 +14,13 @@ var (
 func RegisterHandler(engine *gin.Engine) {
 	// category
 	engine.GET("/admin/category/page", PageCategory)
-	engine.GET("/admin/category", AllCategory)
+	engine.GET("/admin/category/list", AllCategory)
 	engine.POST("/admin/category", AddCategory)
 	engine.PUT("/admin/category", UpdateCategory)
 
 	// i18n query
-	engine.GET("/api/category/:name", CategoryApiData)
+	engine.GET("/api/category/list/:name", CategoryListApiDataByName)
+	engine.GET("/api/category/:id", CategoryApiDataById)
 }
 
 func PageCategory(c *gin.Context) {
@@ -90,12 +91,25 @@ func UpdateCategory(c *gin.Context) {
 
 //====api
 
-func CategoryApiData(c *gin.Context) {
+func CategoryApiDataById(c *gin.Context) {
+	categoryId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		// todo
+		return
+	}
+	data, err := CategoryAppServ.CategoryApiDataById(int64(categoryId))
+	if err != nil {
+		return
+	}
+	c.JSON(200, gin.H{"status": 0, "msg": "", "data": data})
+}
+
+func CategoryListApiDataByName(c *gin.Context) {
 	name := c.Param("name")
 	if name == "" {
 		return
 	}
-	data, err := CategoryAppServ.CategoryApiData(name)
+	data, err := CategoryAppServ.ListCategoryApiDataByName(name)
 	if err != nil {
 		return
 	}
