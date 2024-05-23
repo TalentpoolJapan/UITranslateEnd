@@ -51,7 +51,7 @@ func (c CategoryGatewayImpl) AddCategory(category *category.Category) error {
 	}
 	categoryGroup, _ := c.repo.DycQuery(wrapper)
 	if len(categoryGroup) == 0 {
-		newCategoryId = category.ParentId * 1000
+		newCategoryId = category.ParentId*1000 + 1
 	} else {
 		// 获取category group中id最大的category
 		// 初始化 maxCategory 为数组的第一个元素

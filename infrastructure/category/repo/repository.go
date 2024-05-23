@@ -36,7 +36,7 @@ func (repo *CategoryRepository) DeleteCategory(id int64) error {
 
 func (repo *CategoryRepository) GetCategoryById(id int64) (*category.Category, error) {
 	var category []*CategoryPO
-	err := infrastructure.MysqlDB.Table(categoryTableName).ID(id).Find(&category)
+	err := infrastructure.MysqlDB.Table(categoryTableName).Where("id = ?", id).Find(&category)
 	if err != nil || len(category) == 0 {
 		return nil, err
 	}
@@ -47,13 +47,11 @@ func (repo *CategoryRepository) PageCategory(page int, pageSize int, wrapper *Qu
 	var categories []*CategoryPO
 	//total, err := MysqlDB.Table(categoryTableName).Limit(pageSize, (page-1)*pageSize).FindAndCount(&categories)
 	table := infrastructure.MysqlDB.Table(categoryTableName)
-	if wrapper.ParentId != 0 {
-		table.Where("parent_id = ?", wrapper.ParentId)
-	}
+	table.Where("parent_id = ?", wrapper.ParentId)
 	if wrapper.Name != "" {
 		table.Where("name = ?", wrapper.Name)
 	}
-	total, err := table.Limit(pageSize, (page-1)*pageSize).FindAndCount(&categories)
+	total, err := table.Desc("sort_order").Limit(pageSize, (page-1)*pageSize).FindAndCount(&categories)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -71,7 +69,7 @@ func (repo *CategoryRepository) DycQuery(wrapper *QueryWrapper) ([]*category.Cat
 	if wrapper.Name != "" {
 		table.Where("name = ?", wrapper.Name)
 	}
-	err := table.Find(&categories)
+	err := table.Desc("sort_order").Find(&categories)
 	if err != nil {
 		return nil, err
 	}
