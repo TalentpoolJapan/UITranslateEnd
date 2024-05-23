@@ -1,21 +1,19 @@
-package infrastructure
+package category
 
 import (
-	"uitranslate/domain/gateway"
-	"uitranslate/domain/model"
-	"uitranslate/domain/param"
-	"uitranslate/infrastructure/repo"
+	"uitranslate/domain/category"
+	"uitranslate/infrastructure/category/repo"
 )
 
 var (
-	Impl gateway.ICategoryGateWay = &CategoryGatewayImpl{}
+	Impl category.ICategoryGateWay = &CategoryGatewayImpl{}
 )
 
 type CategoryGatewayImpl struct {
 	repo *repo.CategoryRepository
 }
 
-func (c CategoryGatewayImpl) QueryCategoryById(id int64) (*model.Category, error) {
+func (c CategoryGatewayImpl) GetCategoryById(id int64) (*category.Category, error) {
 	category, err := c.repo.GetCategoryById(id)
 	if err != nil {
 		return nil, err
@@ -23,7 +21,7 @@ func (c CategoryGatewayImpl) QueryCategoryById(id int64) (*model.Category, error
 	return category, nil
 }
 
-func (c CategoryGatewayImpl) QueryCategoryByParentId(parentId int64) ([]*model.Category, error) {
+func (c CategoryGatewayImpl) ListCategoryByParentId(parentId int64) ([]*category.Category, error) {
 	wrapper := &repo.QueryWrapper{
 		ParentId: parentId,
 	}
@@ -34,7 +32,7 @@ func (c CategoryGatewayImpl) QueryCategoryByParentId(parentId int64) ([]*model.C
 	return categories, nil
 }
 
-func (c CategoryGatewayImpl) QueryCategoryByName(name string) ([]*model.Category, error) {
+func (c CategoryGatewayImpl) ListCategoryByName(name string) ([]*category.Category, error) {
 	wrapper := &repo.QueryWrapper{
 		Name: name,
 	}
@@ -45,7 +43,7 @@ func (c CategoryGatewayImpl) QueryCategoryByName(name string) ([]*model.Category
 	return categories, nil
 }
 
-func (c CategoryGatewayImpl) AddCategory(category *model.Category) error {
+func (c CategoryGatewayImpl) AddCategory(category *category.Category) error {
 	// 确认id，每个层级最多1000个
 	var newCategoryId int64
 	wrapper := &repo.QueryWrapper{
@@ -72,17 +70,17 @@ func (c CategoryGatewayImpl) AddCategory(category *model.Category) error {
 	return err
 }
 
-func (c CategoryGatewayImpl) UpdateCategory(category *model.Category) error {
+func (c CategoryGatewayImpl) UpdateCategory(category *category.Category) error {
 	err := c.repo.UpdateCategory(category)
 	return err
 }
 
-func (c CategoryGatewayImpl) DeleteCategory(category *model.Category) error {
+func (c CategoryGatewayImpl) DeleteCategory(category *category.Category) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c CategoryGatewayImpl) PageCategory(param *param.QueryCategoryPage) (int64, []*model.Category, error) {
+func (c CategoryGatewayImpl) PageCategory(param *category.QueryCategoryPage) (int64, []*category.Category, error) {
 	wrapper := &repo.QueryWrapper{
 		ParentId: param.ParentId,
 		Name:     param.Name,

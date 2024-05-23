@@ -1,4 +1,4 @@
-package param
+package category
 
 type QueryCategoryPage struct {
 	Page     int64  `json:"page"`

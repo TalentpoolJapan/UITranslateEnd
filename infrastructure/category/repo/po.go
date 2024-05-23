@@ -1,8 +1,8 @@
-package po
+package repo
 
 import (
 	"time"
-	"uitranslate/domain/model"
+	"uitranslate/domain/category"
 )
 
 type CategoryPO struct {
@@ -17,7 +17,7 @@ type CategoryPO struct {
 	UpdateTime time.Time `json:"update_time"`
 }
 
-func ToPO(entity *model.Category) *CategoryPO {
+func ToPO(entity *category.Category) *CategoryPO {
 	return &CategoryPO{
 		Id:         entity.ID,
 		Name:       entity.Name,
@@ -31,8 +31,8 @@ func ToPO(entity *model.Category) *CategoryPO {
 	}
 }
 
-func (po *CategoryPO) ToEntity() *model.Category {
-	return &model.Category{
+func (po *CategoryPO) ToEntity() *category.Category {
+	return &category.Category{
 		ID:         po.Id,
 		Name:       po.Name,
 		ParentId:   po.ParentId,
@@ -40,13 +40,13 @@ func (po *CategoryPO) ToEntity() *model.Category {
 		SortOrder:  po.SortOrder,
 		NameEn:     po.NameEn,
 		NameJa:     po.NameJa,
-		Status:     model.Status(po.Status),
+		Status:     category.Status(po.Status),
 		UpdateTime: po.UpdateTime,
 	}
 }
 
-func ToEntityList(poList []*CategoryPO) []*model.Category {
-	var list []*model.Category
+func ToEntityList(poList []*CategoryPO) []*category.Category {
+	var list []*category.Category
 	for _, po := range poList {
 		list = append(list, po.ToEntity())
 	}

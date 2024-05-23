@@ -4,15 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 	"io"
 	"net/http"
 	"strings"
 	"time"
 	"uitranslate/adaptor"
-	"uitranslate/infrastructure/repo"
-
-	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
+	"uitranslate/infrastructure"
 	"xorm.io/xorm"
 )
 
@@ -58,7 +57,7 @@ func AuthRequired() gin.HandlerFunc {
 
 func main() {
 	DB.ShowSQL(true)
-	repo.InitMysqlDB()
+	infrastructure.InitMysqlDB()
 	r := gin.Default()
 	r.Use(Cors())
 	authorized := r.Group("/uitranslate")

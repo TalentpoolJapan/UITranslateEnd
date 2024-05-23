@@ -1,8 +1,8 @@
 package repo
 
 import (
-	"uitranslate/domain/model"
-	"uitranslate/infrastructure/repo/po"
+	"uitranslate/domain/category"
+	"uitranslate/infrastructure"
 )
 
 var categoryTableName = "talentpool_category"
@@ -19,13 +19,13 @@ func NewCategoryRepository() *CategoryRepository {
 	return &CategoryRepository{}
 }
 
-func (repo *CategoryRepository) CreateCategory(category *model.Category) (err error) {
-	_, err = MysqlDB.Table(categoryTableName).Insert(po.ToPO(category))
+func (repo *CategoryRepository) CreateCategory(category *category.Category) (err error) {
+	_, err = infrastructure.MysqlDB.Table(categoryTableName).Insert(ToPO(category))
 	return err
 }
 
-func (repo *CategoryRepository) UpdateCategory(category *model.Category) (err error) {
-	_, err = MysqlDB.Table(categoryTableName).Where("id = ?", category.ID).Update(po.ToPO(category))
+func (repo *CategoryRepository) UpdateCategory(category *category.Category) (err error) {
+	_, err = infrastructure.MysqlDB.Table(categoryTableName).Where("id = ?", category.ID).Update(ToPO(category))
 	return err
 }
 
@@ -34,19 +34,19 @@ func (repo *CategoryRepository) DeleteCategory(id int64) error {
 	panic("implement me")
 }
 
-func (repo *CategoryRepository) GetCategoryById(id int64) (*model.Category, error) {
-	var category []*po.CategoryPO
-	err := MysqlDB.Table(categoryTableName).ID(id).Find(&category)
+func (repo *CategoryRepository) GetCategoryById(id int64) (*category.Category, error) {
+	var category []*CategoryPO
+	err := infrastructure.MysqlDB.Table(categoryTableName).ID(id).Find(&category)
 	if err != nil || len(category) == 0 {
 		return nil, err
 	}
 	return category[0].ToEntity(), nil
 }
 
-func (repo *CategoryRepository) PageCategory(page int, pageSize int, wrapper *QueryWrapper) (int64, []*model.Category, error) {
-	var categories []*po.CategoryPO
+func (repo *CategoryRepository) PageCategory(page int, pageSize int, wrapper *QueryWrapper) (int64, []*category.Category, error) {
+	var categories []*CategoryPO
 	//total, err := MysqlDB.Table(categoryTableName).Limit(pageSize, (page-1)*pageSize).FindAndCount(&categories)
-	table := MysqlDB.Table(categoryTableName)
+	table := infrastructure.MysqlDB.Table(categoryTableName)
 	if wrapper.ParentId != 0 {
 		table.Where("parent_id = ?", wrapper.ParentId)
 	}
@@ -58,13 +58,13 @@ func (repo *CategoryRepository) PageCategory(page int, pageSize int, wrapper *Qu
 		return 0, nil, err
 	}
 
-	return total, po.ToEntityList(categories), nil
+	return total, ToEntityList(categories), nil
 }
 
-func (repo *CategoryRepository) DycQuery(wrapper *QueryWrapper) ([]*model.Category, error) {
-	var categories []*po.CategoryPO
+func (repo *CategoryRepository) DycQuery(wrapper *QueryWrapper) ([]*category.Category, error) {
+	var categories []*CategoryPO
 	//total, err := MysqlDB.Table(categoryTableName).Limit(pageSize, (page-1)*pageSize).FindAndCount(&categories)
-	table := MysqlDB.Table(categoryTableName)
+	table := infrastructure.MysqlDB.Table(categoryTableName)
 	if wrapper.ParentId != 0 {
 		table.Where("parent_id = ?", wrapper.ParentId)
 	}
@@ -76,5 +76,5 @@ func (repo *CategoryRepository) DycQuery(wrapper *QueryWrapper) ([]*model.Catego
 		return nil, err
 	}
 
-	return po.ToEntityList(categories), nil
+	return ToEntityList(categories), nil
 }

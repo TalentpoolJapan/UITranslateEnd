@@ -2,8 +2,7 @@ package dto
 
 import (
 	"time"
-	"uitranslate/domain/model"
-	"uitranslate/domain/param"
+	"uitranslate/domain/category"
 )
 
 type AddCategoryReq struct {
@@ -33,8 +32,8 @@ type CategoryPageReq struct {
 	Name     string `json:"name"`
 }
 
-func (dto *AddCategoryReq) ToCategory() *model.Category {
-	category := &model.Category{
+func (dto *AddCategoryReq) ToCategory() *category.Category {
+	category := &category.Category{
 		Name:       dto.Name,
 		ParentId:   dto.ParentId,
 		Tag:        dto.Tag,
@@ -46,8 +45,8 @@ func (dto *AddCategoryReq) ToCategory() *model.Category {
 	return category
 }
 
-func (dto *UpdateCategoryReq) ToCategory() *model.Category {
-	category := &model.Category{
+func (dto *UpdateCategoryReq) ToCategory() *category.Category {
+	category := &category.Category{
 		ID:         dto.ID,
 		Name:       dto.Name,
 		ParentId:   dto.ParentId,
@@ -55,14 +54,14 @@ func (dto *UpdateCategoryReq) ToCategory() *model.Category {
 		SortOrder:  dto.SortOrder,
 		NameEn:     dto.NameEn,
 		NameJa:     dto.NameJa,
-		Status:     model.Status(dto.Status),
+		Status:     category.Status(dto.Status),
 		UpdateTime: time.Now(),
 	}
 	return category
 }
 
-func (dto *CategoryPageReq) ToQuery() *param.QueryCategoryPage {
-	query := &param.QueryCategoryPage{
+func (dto *CategoryPageReq) ToQuery() *category.QueryCategoryPage {
+	query := &category.QueryCategoryPage{
 		Page:     dto.Page,
 		PageSize: dto.PageSize,
 		ParentId: dto.ParentId,

@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"uitranslate/domain/model"
+	"uitranslate/domain/category"
 )
 
 type CategoryDetailResp struct {
@@ -22,7 +22,7 @@ type CategoryPageResp struct {
 	Data     []*CategoryDetailResp `json:"data"`
 }
 
-func ToDto(category *model.Category) *CategoryDetailResp {
+func ToDto(category *category.Category) *CategoryDetailResp {
 	dto := &CategoryDetailResp{
 		ID:        category.ID,
 		Name:      category.Name,
@@ -36,7 +36,7 @@ func ToDto(category *model.Category) *CategoryDetailResp {
 	return dto
 }
 
-func ToDtoList(categories []*model.Category) []*CategoryDetailResp {
+func ToDtoList(categories []*category.Category) []*CategoryDetailResp {
 	var arr []*CategoryDetailResp
 	for _, category := range categories {
 		arr = append(arr, ToDto(category))
