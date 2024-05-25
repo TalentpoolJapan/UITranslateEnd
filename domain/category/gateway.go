@@ -1,6 +1,6 @@
 package category
 
-type ICategoryGateWay interface {
+type Gateway interface {
 	AddCategory(category *Category) error
 
 	UpdateCategory(category *Category) error
@@ -11,7 +11,7 @@ type ICategoryGateWay interface {
 
 	GetCategoryById(id int64) (*Category, error)
 
-	ListCategoryByName(name string) ([]*Category, error)
+	ListCategoryByParentName(name string) ([]*Category, error)
 
 	ListCategoryByParentId(parentId int64) ([]*Category, error)
 }

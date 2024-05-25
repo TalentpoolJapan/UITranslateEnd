@@ -7,15 +7,17 @@ import (
 )
 
 var (
-	Impl ICategoryApplicationService = &CategoryApplicationServiceImpl{}
+	Impl ICategoryApplicationService = &CategoryApplicationServiceImpl{
+		gateway: category.Impl,
+	}
 )
 
 type CategoryApplicationServiceImpl struct {
-	gateway category2.ICategoryGateWay
+	gateway category2.Gateway
 }
 
-func (c *CategoryApplicationServiceImpl) ListCategoryApiDataByName(name string) ([]*dto2.CategoryDetailResp, error) {
-	categories, err := c.gateway.ListCategoryByName(name)
+func (c *CategoryApplicationServiceImpl) ListCategoryByParentName(name string) ([]*dto2.CategoryDetailResp, error) {
+	categories, err := c.gateway.ListCategoryByParentName(name)
 	if err != nil {
 		return nil, err
 	}
@@ -69,10 +71,4 @@ func (c *CategoryApplicationServiceImpl) UpdateCategory(req dto2.UpdateCategoryR
 		return err
 	}
 	return nil
-}
-
-func NewCategoryApplicationService() *CategoryApplicationServiceImpl {
-	return &CategoryApplicationServiceImpl{
-		gateway: *category.NewCategoryGatewayImpl(),
-	}
 }

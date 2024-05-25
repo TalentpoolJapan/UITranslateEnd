@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	CategoryAppServ category.ICategoryApplicationService = category.NewCategoryApplicationService()
+	CategoryAppServ = category.Impl
 )
 
 func RegisterHandler(engine *gin.Engine) {
@@ -119,7 +119,7 @@ func CategoryListApiDataByName(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, RestResult{Status: -1, Msg: "Name is required"})
 		return
 	}
-	data, err := CategoryAppServ.ListCategoryApiDataByName(name)
+	data, err := CategoryAppServ.ListCategoryByParentName(name)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: err.Error()})
 		return
