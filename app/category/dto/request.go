@@ -33,7 +33,7 @@ type CategoryPageReq struct {
 }
 
 func (dto *AddCategoryReq) ToCategory() *category.Category {
-	category := &category.Category{
+	entity := &category.Category{
 		Name:       dto.Name,
 		ParentId:   dto.ParentId,
 		Tag:        dto.Tag,
@@ -42,11 +42,11 @@ func (dto *AddCategoryReq) ToCategory() *category.Category {
 		NameJa:     dto.NameJa,
 		UpdateTime: time.Now(),
 	}
-	return category
+	return entity
 }
 
 func (dto *UpdateCategoryReq) ToCategory() *category.Category {
-	category := &category.Category{
+	entity := &category.Category{
 		ID:         dto.ID,
 		Name:       dto.Name,
 		ParentId:   dto.ParentId,
@@ -57,7 +57,7 @@ func (dto *UpdateCategoryReq) ToCategory() *category.Category {
 		Status:     category.Status(dto.Status),
 		UpdateTime: time.Now(),
 	}
-	return category
+	return entity
 }
 
 func (dto *CategoryPageReq) ToQuery() *category.QueryCategoryPage {
