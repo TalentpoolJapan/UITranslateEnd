@@ -82,6 +82,24 @@ func AddCategory(c *gin.Context) {
 	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "Category added successfully"})
 }
 
+//func BatchAddCategory(c *gin.Context) {
+//	var reqs []dto.AddCategoryReq
+//	c.ShouldBindJSON(&reqs)
+//	//if err != nil {
+//	//	c.JSON(http.StatusBadRequest, RestResult{Status: -1, Msg: "Invalid request"})
+//	//	return
+//	//}
+//	for _, req := range reqs {
+//		bizErr := CategoryAppServ.AddCategory(req)
+//		if bizErr != nil {
+//			c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: bizErr.Error()})
+//			return
+//		}
+//	}
+//
+//	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "Category added successfully"})
+//}
+
 func UpdateCategory(c *gin.Context) {
 	var req dto.UpdateCategoryReq
 	err := c.ShouldBindJSON(&req)
