@@ -16,32 +16,39 @@ type CategoryApplicationServiceImpl struct {
 	gateway category2.Gateway
 }
 
-func (c *CategoryApplicationServiceImpl) ListCategoryByParentName(name string) ([]*dto2.CategoryDetailResp, error) {
-	categories, err := c.gateway.ListCategoryByParentName(name)
+func (serv *CategoryApplicationServiceImpl) ListCategoryByParentName(name string) ([]*dto2.CategoryDetailResp, error) {
+	allCategories, err := serv.gateway.ListCategoryByParentName(name)
 	if err != nil {
 		return nil, err
 	}
-	return dto2.ToDtoList(categories), nil
+	// filter status
+	var publishCategories []*category2.Category
+	for _, c := range allCategories {
+		if c.Status == category2.Published {
+			publishCategories = append(publishCategories, c)
+		}
+	}
+	return dto2.ToDtoList(publishCategories), nil
 }
 
-func (c *CategoryApplicationServiceImpl) CategoryApiDataById(id int64) (*dto2.CategoryDetailResp, error) {
-	category, err := c.gateway.GetCategoryById(id)
+func (serv *CategoryApplicationServiceImpl) CategoryApiDataById(id int64) (*dto2.CategoryDetailResp, error) {
+	category, err := serv.gateway.GetCategoryById(id)
 	if err != nil {
 		return nil, err
 	}
 	return dto2.ToDto(category), err
 }
 
-func (c *CategoryApplicationServiceImpl) AllCategory(parentId int64) ([]*dto2.CategoryDetailResp, error) {
-	categories, err := c.gateway.ListCategoryByParentId(parentId)
+func (serv *CategoryApplicationServiceImpl) AllCategory(parentId int64) ([]*dto2.CategoryDetailResp, error) {
+	categories, err := serv.gateway.ListCategoryByParentId(parentId)
 	if err != nil {
 		return nil, err
 	}
 	return dto2.ToDtoList(categories), nil
 }
 
-func (c *CategoryApplicationServiceImpl) PageCategory(req dto2.CategoryPageReq) (dto2.CategoryPageResp, error) {
-	totalRow, categories, err := c.gateway.PageCategory(req.ToQuery())
+func (serv *CategoryApplicationServiceImpl) PageCategory(req dto2.CategoryPageReq) (dto2.CategoryPageResp, error) {
+	totalRow, categories, err := serv.gateway.PageCategory(req.ToQuery())
 	if err != nil {
 		// todo
 		return dto2.CategoryPageResp{}, err
@@ -55,18 +62,18 @@ func (c *CategoryApplicationServiceImpl) PageCategory(req dto2.CategoryPageReq) 
 	return resp, nil
 }
 
-func (c *CategoryApplicationServiceImpl) AddCategory(req dto2.AddCategoryReq) error {
+func (serv *CategoryApplicationServiceImpl) AddCategory(req dto2.AddCategoryReq) error {
 	category := req.ToCategory()
-	err := c.gateway.AddCategory(category)
+	err := serv.gateway.AddCategory(category)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *CategoryApplicationServiceImpl) UpdateCategory(req dto2.UpdateCategoryReq) error {
+func (serv *CategoryApplicationServiceImpl) UpdateCategory(req dto2.UpdateCategoryReq) error {
 	category := req.ToCategory()
-	err := c.gateway.UpdateCategory(category)
+	err := serv.gateway.UpdateCategory(category)
 	if err != nil {
 		return err
 	}

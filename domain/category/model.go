@@ -7,7 +7,8 @@ import (
 type Status int
 
 const (
-	Published Status = iota
+	_ Status = iota
+	Published
 	Unpublished
 )
 
