@@ -23,8 +23,8 @@ jobs:
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
         with:
-          aws-access-key-id: image_push-at-972786810942
-          aws-secret-access-key: /rNcGhu8QVhAN+6hBBFbSMg9rH3IYY9mcZ0BNNSAG+Lonvx1T2GBtaD7f7A=
+          aws-access-key-id: AKIA6E7U4YA7FL76IHEF
+          aws-secret-access-key: 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
           aws-region: ap-northeast-1
 
       - name: Build and push Docker image
