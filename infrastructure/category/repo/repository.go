@@ -63,9 +63,7 @@ func (repo *CategoryRepository) DycQuery(wrapper *QueryWrapper) ([]*category.Cat
 	var categories []*CategoryPO
 	//total, err := MysqlDB.Table(categoryTableName).Limit(pageSize, (page-1)*pageSize).FindAndCount(&categories)
 	table := infrastructure.MysqlDB.Table(categoryTableName)
-	if wrapper.ParentId != 0 {
-		table.Where("parent_id = ?", wrapper.ParentId)
-	}
+	table.Where("parent_id = ?", wrapper.ParentId)
 	if wrapper.Name != "" {
 		table.Where("name = ?", wrapper.Name)
 	}
