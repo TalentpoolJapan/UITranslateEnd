@@ -55,8 +55,8 @@ func PageCategory(c *gin.Context) {
 
 func AllCategory(c *gin.Context) {
 	parentId, err := strconv.Atoi(c.Query("parent_id"))
-	if err != nil || parentId == 0 {
-		parentId = 1
+	if err != nil {
+		parentId = 0
 	}
 
 	categories, bizErr := CategoryAppServ.AllCategory(int64(parentId))
