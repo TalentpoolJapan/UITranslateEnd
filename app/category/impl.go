@@ -39,7 +39,7 @@ func (serv *CategoryApplicationServiceImpl) CategoryApiDataById(id int64) (*dto2
 	return dto2.ToDto(category), err
 }
 
-func (serv *CategoryApplicationServiceImpl) AllCategory(parentId int64) ([]*dto2.CategoryDetailResp, error) {
+func (serv *CategoryApplicationServiceImpl) AllCategoryByParentId(parentId int64) ([]*dto2.CategoryDetailResp, error) {
 	categories, err := serv.gateway.ListCategoryByParentId(parentId)
 	if err != nil {
 		return nil, err

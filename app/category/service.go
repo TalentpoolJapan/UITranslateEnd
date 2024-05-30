@@ -10,7 +10,7 @@ type ICategoryApplicationService interface {
 	UpdateCategory(req dto2.UpdateCategoryReq) error
 
 	// query
-	AllCategory(parentId int64) ([]*dto2.CategoryDetailResp, error)
+	AllCategoryByParentId(parentId int64) ([]*dto2.CategoryDetailResp, error)
 
 	PageCategory(req dto2.CategoryPageReq) (dto2.CategoryPageResp, error)
 

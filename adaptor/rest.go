@@ -22,6 +22,7 @@ func RegisterHandler(engine *gin.Engine) {
 	// i18n query
 	engine.GET("/api/category/list/:name", CategoryListApiDataByName)
 	engine.GET("/api/category/:id", CategoryApiDataById)
+	engine.GET("/api/category/list", AllCategory)
 }
 
 func PageCategory(c *gin.Context) {
@@ -59,7 +60,7 @@ func AllCategory(c *gin.Context) {
 		parentId = 0
 	}
 
-	categories, bizErr := CategoryAppServ.AllCategory(int64(parentId))
+	categories, bizErr := CategoryAppServ.AllCategoryByParentId(int64(parentId))
 	if bizErr != nil {
 		c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: bizErr.Error()})
 		return
