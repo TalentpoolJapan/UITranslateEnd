@@ -10,8 +10,7 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	"uitranslate/adaptor"
-	"uitranslate/infrastructure"
+	"uitranslate/adaptor/web"
 	"xorm.io/xorm"
 )
 
@@ -57,7 +56,7 @@ func AuthRequired() gin.HandlerFunc {
 
 func main() {
 	DB.ShowSQL(true)
-	infrastructure.InitMysqlDB()
+	//infrastructure.InitMysqlDB()
 	r := gin.Default()
 	r.Use(Cors())
 	authorized := r.Group("/uitranslate")
@@ -100,7 +99,8 @@ func main() {
 
 	}
 
-	adaptor.RegisterHandler(r)
+	web.RegisterCategoryHandler(r)
+	web.RegisterNotificationHandler(r)
 
 	r.Run(":8332")
 
@@ -512,7 +512,7 @@ func GetTranslateSelectByClassid(c *gin.Context) {
 		c.JSON(200, gin.H{"status": 0, "msg": "", "data": data})
 		return
 	}
-	c.JSON(200, gin.H{"status": 1, "msg": "ID not in range"})
+	c.JSON(200, gin.H{"status": 1, "msg": "Id not in range"})
 }
 
 func AddTranslateSelectByClassid(c *gin.Context) {
@@ -524,7 +524,7 @@ func AddTranslateSelectByClassid(c *gin.Context) {
 	}
 	classid := _CommonSelect.Classid
 	if classid < 5 || classid > 13 {
-		c.JSON(200, gin.H{"status": 1, "msg": "ID not in range"})
+		c.JSON(200, gin.H{"status": 1, "msg": "Id not in range"})
 		return
 	}
 	if classid == 5 {
@@ -610,7 +610,7 @@ func UpdateTranslateSelectByClassid(c *gin.Context) {
 	}
 	classid := _CommonSelect.Classid
 	if classid < 5 || classid > 13 {
-		c.JSON(200, gin.H{"status": 1, "msg": "ID not in range"})
+		c.JSON(200, gin.H{"status": 1, "msg": "Id not in range"})
 		return
 	}
 	if classid == 5 {
@@ -696,7 +696,7 @@ func DeleteTranslateSelectByClassid(c *gin.Context) {
 	}
 	classid := _CommonSelect.Classid
 	if classid < 5 || classid > 13 {
-		c.JSON(200, gin.H{"status": 1, "msg": "ID not in range"})
+		c.JSON(200, gin.H{"status": 1, "msg": "Id not in range"})
 		return
 	}
 	if classid == 5 {
@@ -790,7 +790,7 @@ func GetTranslateUIByClassid(c *gin.Context) {
 		c.JSON(200, gin.H{"status": 0, "msg": "", "data": data})
 		return
 	}
-	c.JSON(200, gin.H{"status": 1, "msg": "ID not in range"})
+	c.JSON(200, gin.H{"status": 1, "msg": "Id not in range"})
 }
 func AddTranslateUIByClassid(c *gin.Context) {
 	var _UITranslate UITranslate

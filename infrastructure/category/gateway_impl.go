@@ -64,7 +64,7 @@ func (c GatewayImpl) AddCategory(category *category.Category) error {
 		// 获取category group中id最大的category
 		// 初始化 maxCategory 为数组的第一个元素
 		maxCategory := categoryGroup[0]
-		// 遍历数组，比较每个 Category 的 ID，更新最大的 Category
+		// 遍历数组，比较每个 Category 的 Id，更新最大的 Category
 		for _, category := range categoryGroup {
 			if category.ID > maxCategory.ID {
 				maxCategory = category

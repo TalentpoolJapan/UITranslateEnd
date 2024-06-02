@@ -4,13 +4,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"testing"
 	"uitranslate/domain/category"
-	"uitranslate/infrastructure"
 	"uitranslate/infrastructure/category/repo"
 )
-
-func init() {
-	infrastructure.InitMysqlDB()
-}
 
 func TestCategoryRepository_CreateCategory(t *testing.T) {
 	repository := repo.NewCategoryRepository()
@@ -29,7 +24,7 @@ func TestCategoryRepository_CreateCategory(t *testing.T) {
 func TestCategoryRepository_GetCategoryById(t *testing.T) {
 	repository := repo.NewCategoryRepository()
 
-	// Assuming there is a category with ID = 1 in the database
+	// Assuming there is a category with Id = 1 in the database
 	categoryID := int64(1)
 	expectedCategoryName := "Some Category"
 

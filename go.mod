@@ -2,10 +2,16 @@ module uitranslate
 
 go 1.20.8
 
-require github.com/gin-gonic/gin v1.9.1
+require (
+	github.com/DATA-DOG/go-sqlmock v1.5.2
+	github.com/gin-gonic/gin v1.9.1
+	github.com/stretchr/testify v1.8.4
+)
 
 require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/syndtr/goleveldb v1.0.0 // indirect
 	xorm.io/builder v0.3.11-0.20220531020008-1bd24a7dc978 // indirect
 )

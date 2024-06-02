@@ -1,4 +1,4 @@
-package adaptor
+package web
 
 type RestResult struct {
 	Status int         `json:"status"`

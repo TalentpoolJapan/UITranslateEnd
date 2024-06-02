@@ -5,7 +5,7 @@ import (
 	"xorm.io/xorm"
 )
 
-var MysqlDB *xorm.Engine
+var MysqlDB *xorm.Engine = initMysqlDB()
 
 var (
 	MYSQL_HOST    = "tcp(13.231.174.2:3306)"
@@ -13,7 +13,7 @@ var (
 	MYSQL_SECRECT = "yYVim5WbqzkWziNY"
 )
 
-func InitMysqlDB() {
+func initMysqlDB() *xorm.Engine {
 	//var MYSQL_HOST = "tcp(127.0.0.1:3306)"
 	//var MYSQL_SECRECT = "123"
 	//EEpLWKlYixYtYGSx
@@ -22,6 +22,7 @@ func InitMysqlDB() {
 	//var MYSQL_DB = "talentpool"
 	//var DEEPL_FREE_API_KEY = "ed8fb40e-858f-7167-44c8-65ec333131c2:fx"
 
-	MysqlDB, _ = xorm.NewEngine("mysql", fmt.Sprintf("root:%s@%s/%s?charset=utf8", MYSQL_SECRECT, MYSQL_HOST, MYSQL_DB))
-	MysqlDB.ShowSQL(true)
+	db, _ := xorm.NewEngine("mysql", fmt.Sprintf("root:%s@%s/%s?charset=utf8", MYSQL_SECRECT, MYSQL_HOST, MYSQL_DB))
+	db.ShowSQL(true)
+	return db
 }

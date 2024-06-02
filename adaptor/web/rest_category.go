@@ -1,4 +1,4 @@
-package adaptor
+package web
 
 import (
 	"github.com/gin-gonic/gin"
@@ -12,14 +12,12 @@ var (
 	CategoryAppServ = category.Impl
 )
 
-func RegisterHandler(engine *gin.Engine) {
+func RegisterCategoryHandler(engine *gin.Engine) {
 	// category
 	engine.GET("/admin/category/page", PageCategory)
 	engine.GET("/admin/category/list", AllCategory)
 	engine.POST("/admin/category", AddCategory)
 	engine.PUT("/admin/category", UpdateCategory)
-
-	// i18n query
 	engine.GET("/api/category/list/:name", CategoryListApiDataByName)
 	engine.GET("/api/category/:id", CategoryApiDataById)
 	engine.GET("/api/category/list", AllCategory)
@@ -121,7 +119,7 @@ func UpdateCategory(c *gin.Context) {
 func CategoryApiDataById(c *gin.Context) {
 	categoryId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, RestResult{Status: -1, Msg: "Invalid category ID"})
+		c.JSON(http.StatusBadRequest, RestResult{Status: -1, Msg: "Invalid category Id"})
 		return
 	}
 	data, err := CategoryAppServ.CategoryApiDataById(int64(categoryId))

@@ -1,4 +1,4 @@
-package notification
+package model
 
 type EventType string
 
@@ -11,5 +11,5 @@ const (
 
 type EventTypeSetting struct {
 	EventType EventType `json:"event_type"`
-	Topic     Topic     `json:"topic"`
+	Topic     TopicInfo `json:"topic"`
 }
