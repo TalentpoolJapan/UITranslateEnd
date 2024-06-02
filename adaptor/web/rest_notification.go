@@ -64,7 +64,7 @@ func UpdateTopic(c *gin.Context) {
 
 func ListTopicTemplateByTopicId(c *gin.Context) {
 	var qry notification.TopicTemplateByTopicIdQuery
-	if err := c.BindQuery(&qry); err != nil {
+	if err := c.ShouldBindQuery(&qry); err != nil {
 		c.JSON(http.StatusBadRequest, RestResult{Status: -1, Msg: err.Error()})
 		return
 	}

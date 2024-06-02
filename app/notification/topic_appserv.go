@@ -53,7 +53,7 @@ type TopicTemplateByIdQry struct {
 }
 
 type TopicTemplateByTopicIdQuery struct {
-	TopicId int64
+	TopicId int64 `json:"topic_id" form:"topic_id"`
 }
 
 type TopicTemplateAddCmd struct {
