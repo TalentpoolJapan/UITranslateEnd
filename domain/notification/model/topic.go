@@ -15,8 +15,8 @@ type TopicInfo struct {
 	CreateTime  time.Time `json:"create_time"`
 	UpdateTime  time.Time `json:"update_time"`
 
-	SubscribeTarget string `json:"subscribe_target"`
-	TriggerId       int64  `json:"trigger_id"`
+	SubscribeTarget SubscriberType `json:"subscribe_target"`
+	TriggerId       int64          `json:"trigger_id"`
 	// todo cms
 }
 

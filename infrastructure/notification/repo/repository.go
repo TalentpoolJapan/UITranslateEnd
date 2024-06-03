@@ -187,3 +187,42 @@ func (r *NotificationRepository) UpdateTrigger(trigger model.Trigger) error {
 }
 
 // endregion
+
+// region subscribe
+
+func (r *NotificationRepository) SaveSubscribeTopicMapping(mapping []*model.SubscribeTopicMapping) error {
+	session := r.DB.NewSession()
+	defer session.Close()
+
+	err := session.Begin()
+	if err != nil {
+		return err
+	}
+
+	for _, mapEntity := range mapping {
+		mapPO := ConvertSubscribeTopicMappingPO(*mapEntity)
+		_, err := session.Table(SubscriberTopicMappingTableName).Insert(mapPO)
+		if err != nil {
+			_ = session.Rollback()
+			return err
+		}
+	}
+
+	err = session.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *NotificationRepository) RemoveSubscribeTopicMappingBySubscriberId(subscriberUuid string) error {
+	_, err := r.DB.Table(SubscriberTopicMappingTableName).Where("subscriber_uuid = ?", subscriberUuid).Delete(&SubscribeTopicMappingPO{})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// endregion

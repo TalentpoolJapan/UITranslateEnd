@@ -6,20 +6,21 @@ import (
 )
 
 const (
-	TopicInfoTableName     = "nf_topic_info"
-	TopicTemplateTableName = "nf_topic_template"
-	TriggerTableName       = "nf_trigger"
+	TopicInfoTableName              = "nf_topic_info"
+	TopicTemplateTableName          = "nf_topic_template"
+	TriggerTableName                = "nf_trigger"
+	SubscriberTopicMappingTableName = "nf_subscriber_topic_mapping"
 )
 
 type TopicInfoPO struct {
-	Id              int64     `json:"id"`
-	Title           string    `json:"title"`
-	Description     string    `json:"description"`
-	Status          int       `json:"status"`
-	CreateTime      time.Time `json:"create_time"`
-	UpdateTime      time.Time `json:"update_time"`
-	SubscribeTarget string    `json:"subscribe_target"`
-	TriggerId       int64     `json:"trigger_id"`
+	Id              int64                `json:"id"`
+	Title           string               `json:"title"`
+	Description     string               `json:"description"`
+	Status          int                  `json:"status"`
+	CreateTime      time.Time            `json:"create_time"`
+	UpdateTime      time.Time            `json:"update_time"`
+	SubscribeTarget model.SubscriberType `json:"subscribe_target"`
+	TriggerId       int64                `json:"trigger_id"`
 }
 
 type TopicTemplatePO struct {
@@ -40,6 +41,12 @@ type TriggerPO struct {
 	Frequency  string    `json:"frequency"`
 	CreateTime time.Time `json:"create_time"`
 	UpdateTime time.Time `json:"update_time"`
+}
+
+type SubscribeTopicMappingPO struct {
+	SubscriberType model.SubscriberType `json:"subscriber_type"`
+	SubscriberUuid int64                `json:"subscriber_uuid"`
+	TopicId        int64                `json:"topic_id"`
 }
 
 func ConvertTopicInfoPO(entity model.TopicInfo) *TopicInfoPO {
@@ -113,6 +120,22 @@ func (po *TriggerPO) ConvertToEntity() *model.Trigger {
 		Frequency:  po.Frequency,
 		CreateTime: po.CreateTime,
 		UpdateTime: po.UpdateTime,
+	}
+}
+
+func ConvertSubscribeTopicMappingPO(entity model.SubscribeTopicMapping) *SubscribeTopicMappingPO {
+	return &SubscribeTopicMappingPO{
+		SubscriberType: entity.SubscriberType,
+		SubscriberUuid: entity.SubscriberUuid,
+		TopicId:        entity.TopicId,
+	}
+}
+
+func (po *SubscribeTopicMappingPO) ConvertToEntity() *model.SubscribeTopicMapping {
+	return &model.SubscribeTopicMapping{
+		SubscriberType: po.SubscriberType,
+		SubscriberUuid: po.SubscriberUuid,
+		TopicId:        po.TopicId,
 	}
 }
 

@@ -30,109 +30,109 @@ func RegisterNotificationHandler(engine *gin.Engine) {
 func ListTopic(c *gin.Context) {
 	topicInfoResps, bizErr := TopicAppServ.ListTopicInfo()
 	if bizErr != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: bizErr.Error()})
+		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: bizErr.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "", Data: topicInfoResps})
+	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "", Data: topicInfoResps})
 }
 
 func AddTopic(c *gin.Context) {
 	var cmd notification.TopicInfoAddCmd
 	if err := c.BindJSON(&cmd); err != nil {
-		c.JSON(http.StatusBadRequest, RestResult{Status: -1, Msg: err.Error()})
+		c.JSON(http.StatusBadRequest, RestResult{Code: -1, Message: err.Error()})
 		return
 	}
 	if err := TopicAppServ.AddTopicInfo(cmd); err != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: err.Error()})
+		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "Topic added successfully"})
+	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "Topic added successfully"})
 }
 
 func UpdateTopic(c *gin.Context) {
 	var cmd notification.TopicInfoUpdateCmd
 	if err := c.BindJSON(&cmd); err != nil {
-		c.JSON(http.StatusBadRequest, RestResult{Status: -1, Msg: err.Error()})
+		c.JSON(http.StatusBadRequest, RestResult{Code: -1, Message: err.Error()})
 		return
 	}
 	if err := TopicAppServ.UpdateTopicInfo(cmd); err != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: err.Error()})
+		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "Topic updated successfully"})
+	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "Topic updated successfully"})
 }
 
 func ListTopicTemplateByTopicId(c *gin.Context) {
 	var qry notification.TopicTemplateByTopicIdQuery
 	if err := c.ShouldBindQuery(&qry); err != nil {
-		c.JSON(http.StatusBadRequest, RestResult{Status: -1, Msg: err.Error()})
+		c.JSON(http.StatusBadRequest, RestResult{Code: -1, Message: err.Error()})
 		return
 	}
 	topicTemplateResps, bizErr := TopicAppServ.ListTopicTemplateByTopicId(qry)
 	if bizErr != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: bizErr.Error()})
+		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: bizErr.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "", Data: topicTemplateResps})
+	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "", Data: topicTemplateResps})
 }
 
 func AddTopicTemplate(c *gin.Context) {
 	var cmd notification.TopicTemplateAddCmd
 	if err := c.BindJSON(&cmd); err != nil {
-		c.JSON(http.StatusBadRequest, RestResult{Status: -1, Msg: err.Error()})
+		c.JSON(http.StatusBadRequest, RestResult{Code: -1, Message: err.Error()})
 		return
 	}
 	if err := TopicAppServ.AddTopicTemplate(cmd); err != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: err.Error()})
+		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "Topic template added successfully"})
+	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "Topic template added successfully"})
 }
 
 func UpdateTopicTemplate(c *gin.Context) {
 	var cmd notification.TopicTemplateUpdateCmd
 	if err := c.BindJSON(&cmd); err != nil {
-		c.JSON(http.StatusBadRequest, RestResult{Status: -1, Msg: err.Error()})
+		c.JSON(http.StatusBadRequest, RestResult{Code: -1, Message: err.Error()})
 		return
 	}
 	if err := TopicAppServ.UpdateTopicTemplate(cmd); err != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: err.Error()})
+		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "Topic template updated successfully"})
+	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "Topic template updated successfully"})
 }
 
 func ListTriggers(c *gin.Context) {
 	triggerResps, bizErr := TriggerAppServ.ListTrigger()
 	if bizErr != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: bizErr.Error()})
+		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: bizErr.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "", Data: triggerResps})
+	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "", Data: triggerResps})
 }
 
 func AddTrigger(c *gin.Context) {
 	var cmd notification.TriggerAddCmd
 	if err := c.BindJSON(&cmd); err != nil {
-		c.JSON(http.StatusBadRequest, RestResult{Status: -1, Msg: err.Error()})
+		c.JSON(http.StatusBadRequest, RestResult{Code: -1, Message: err.Error()})
 		return
 	}
 	if err := TriggerAppServ.AddTrigger(&cmd); err != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: err.Error()})
+		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "Trigger added successfully"})
+	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "Trigger added successfully"})
 }
 
 func UpdateTrigger(c *gin.Context) {
 	var cmd notification.TriggerUpdateCmd
 	if err := c.BindJSON(&cmd); err != nil {
-		c.JSON(http.StatusBadRequest, RestResult{Status: -1, Msg: err.Error()})
+		c.JSON(http.StatusBadRequest, RestResult{Code: -1, Message: err.Error()})
 		return
 	}
 	if err := TriggerAppServ.UpdateTrigger(&cmd); err != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: err.Error()})
+		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "Trigger update successfully"})
+	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "Trigger update successfully"})
 }

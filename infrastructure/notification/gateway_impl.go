@@ -83,6 +83,11 @@ func (g *GatewayImpl) UpdateTrigger(trigger *model.Trigger) error {
 }
 
 func (g *GatewayImpl) SubscribeTopic(subscribeTopic *model.SubscribeTopic) error {
+	err := g.notificationRepo.RemoveSubscribeTopicMappingBySubscriberId(subscribeTopic.Subscriber.Uuid)
+	if err != nil {
+		return err
+	}
+
 	// todo
 	return nil
 }

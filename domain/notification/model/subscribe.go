@@ -1,8 +1,16 @@
 package model
 
+type SubscriberType string
+
+const (
+	JobSeeker  = SubscriberType("job_seeker")
+	Enterprise = SubscriberType("enterprise")
+)
+
 type Subscriber struct {
-	ID   int64  `json:"id"`
-	Name string `json:"name"`
+	Uuid string         `json:"uuid"`
+	Type SubscriberType `json:"type"`
+	Name string         `json:"name"`
 }
 
 func (s Subscriber) AcceptChannels(topicInfo TopicInfo) []Channel {
@@ -11,8 +19,9 @@ func (s Subscriber) AcceptChannels(topicInfo TopicInfo) []Channel {
 }
 
 type SubscribeTopicMapping struct {
-	SubscriberId int64 `json:"subscriber_id"`
-	TopicId      int64 `json:"topic_id"`
+	SubscriberType SubscriberType `json:"subscriber_type"`
+	SubscriberUuid int64          `json:"subscriber_uuid"`
+	TopicId        int64          `json:"topic_id"`
 }
 
 type SubscribeTopic struct {

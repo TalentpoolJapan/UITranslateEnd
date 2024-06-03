@@ -46,10 +46,10 @@ func PageCategory(c *gin.Context) {
 
 	pageCategory, bizErr := CategoryAppServ.PageCategory(req)
 	if bizErr != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: bizErr.Error()})
+		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: bizErr.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "", Data: pageCategory})
+	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "", Data: pageCategory})
 }
 
 func AllCategory(c *gin.Context) {
@@ -60,58 +60,58 @@ func AllCategory(c *gin.Context) {
 
 	categories, bizErr := CategoryAppServ.AllCategoryByParentId(int64(parentId))
 	if bizErr != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: bizErr.Error()})
+		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: bizErr.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "", Data: categories})
+	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "", Data: categories})
 }
 
 func AddCategory(c *gin.Context) {
 	var req dto.AddCategoryReq
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, RestResult{Status: -1, Msg: "Invalid request"})
+		c.JSON(http.StatusBadRequest, RestResult{Code: -1, Message: "Invalid request"})
 		return
 	}
 	bizErr := CategoryAppServ.AddCategory(req)
 	if bizErr != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: bizErr.Error()})
+		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: bizErr.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "Category added successfully"})
+	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "Category added successfully"})
 }
 
 //func BatchAddCategory(c *gin.Context) {
 //	var reqs []dto.AddCategoryReq
 //	c.ShouldBindJSON(&reqs)
 //	//if err != nil {
-//	//	c.JSON(http.StatusBadRequest, RestResult{Status: -1, Msg: "Invalid request"})
+//	//	c.JSON(http.StatusBadRequest, RestResult{Code: -1, Message: "Invalid request"})
 //	//	return
 //	//}
 //	for _, req := range reqs {
 //		bizErr := CategoryAppServ.AddCategory(req)
 //		if bizErr != nil {
-//			c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: bizErr.Error()})
+//			c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: bizErr.Error()})
 //			return
 //		}
 //	}
 //
-//	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "Category added successfully"})
+//	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "Category added successfully"})
 //}
 
 func UpdateCategory(c *gin.Context) {
 	var req dto.UpdateCategoryReq
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, RestResult{Status: -1, Msg: "Invalid request"})
+		c.JSON(http.StatusBadRequest, RestResult{Code: -1, Message: "Invalid request"})
 		return
 	}
 	bizErr := CategoryAppServ.UpdateCategory(req)
 	if bizErr != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: bizErr.Error()})
+		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: bizErr.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "Category updated successfully"})
+	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "Category updated successfully"})
 }
 
 //====api
@@ -119,27 +119,27 @@ func UpdateCategory(c *gin.Context) {
 func CategoryApiDataById(c *gin.Context) {
 	categoryId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, RestResult{Status: -1, Msg: "Invalid category Id"})
+		c.JSON(http.StatusBadRequest, RestResult{Code: -1, Message: "Invalid category Id"})
 		return
 	}
 	data, err := CategoryAppServ.CategoryApiDataById(int64(categoryId))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: err.Error()})
+		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "", Data: data})
+	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "", Data: data})
 }
 
 func CategoryListApiDataByName(c *gin.Context) {
 	name := c.Param("name")
 	if name == "" {
-		c.JSON(http.StatusBadRequest, RestResult{Status: -1, Msg: "Name is required"})
+		c.JSON(http.StatusBadRequest, RestResult{Code: -1, Message: "Name is required"})
 		return
 	}
 	data, err := CategoryAppServ.ListCategoryByParentName(name)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Status: -1, Msg: err.Error()})
+		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, RestResult{Status: 0, Msg: "", Data: data})
+	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "", Data: data})
 }
