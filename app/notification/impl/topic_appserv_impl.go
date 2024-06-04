@@ -93,6 +93,7 @@ func (t *TopicAppServImpl) GetTopicTemplateById(qry notification.TopicTemplateBy
 		ID:         topicTemplate.ID,
 		TopicId:    topicTemplate.TopicId,
 		Channel:    string(topicTemplate.Channel),
+		Name:       topicTemplate.Name,
 		Subject:    topicTemplate.Subject,
 		Content:    topicTemplate.Content,
 		Status:     int(topicTemplate.Status),
@@ -111,6 +112,7 @@ func (t *TopicAppServImpl) ListTopicTemplateByTopicId(qry notification.TopicTemp
 		resp = append(resp, &notification.TopicTemplateResp{
 			ID:         topicTemplate.ID,
 			TopicId:    topicTemplate.TopicId,
+			Name:       topicTemplate.Name,
 			Channel:    string(topicTemplate.Channel),
 			Subject:    topicTemplate.Subject,
 			Content:    topicTemplate.Content,
@@ -125,6 +127,7 @@ func (t *TopicAppServImpl) ListTopicTemplateByTopicId(qry notification.TopicTemp
 func (t *TopicAppServImpl) AddTopicTemplate(cmd notification.TopicTemplateAddCmd) error {
 	return t.gateway.SaveTopicTemplate(&model.TopicTemplate{
 		TopicId: cmd.TopicId,
+		Name:    cmd.Name,
 		Channel: model.Channel(cmd.Channel),
 		Subject: cmd.Subject,
 		Content: cmd.Content,
@@ -136,6 +139,7 @@ func (t *TopicAppServImpl) UpdateTopicTemplate(cmd notification.TopicTemplateUpd
 	return t.gateway.UpdateTopicTemplate(&model.TopicTemplate{
 		ID:      cmd.ID,
 		TopicId: cmd.TopicId,
+		Name:    cmd.Name,
 		Channel: model.Channel(cmd.Channel),
 		Subject: cmd.Subject,
 		Content: cmd.Content,

@@ -83,11 +83,40 @@ func (g *GatewayImpl) UpdateTrigger(trigger *model.Trigger) error {
 }
 
 func (g *GatewayImpl) SubscribeTopic(subscribeTopic *model.SubscribeTopic) error {
-	err := g.notificationRepo.RemoveSubscribeTopicMappingBySubscriberId(subscribeTopic.Subscriber.Uuid)
-	if err != nil {
-		return err
+	rmErr := g.notificationRepo.RemoveSubscribeTopicMappingBySubscriberId(subscribeTopic.Subscriber.Uuid)
+	if rmErr != nil {
+		return rmErr
 	}
 
-	// todo
+	var mappings []*model.SubscribeTopicMapping
+	for _, topicId := range subscribeTopic.TopicIds {
+		mappings = append(mappings, &model.SubscribeTopicMapping{
+			SubscriberType: subscribeTopic.Subscriber.Type,
+			SubscriberUuid: subscribeTopic.Subscriber.Uuid,
+			TopicId:        topicId,
+		})
+	}
+	saveErr := g.notificationRepo.SaveSubscribeTopicMapping(mappings)
+	if saveErr != nil {
+		return saveErr
+	}
 	return nil
+}
+
+func (g *GatewayImpl) ListSubscribeTopic(subscriber *model.Subscriber) (*model.SubscribeTopic, error) {
+	subscribeTopicMappings, err := g.notificationRepo.ListSubscribeTopicMappingBySubscriber(subscriber)
+	if err != nil {
+		return nil, err
+	}
+	var topicIds []int64
+	for _, mapping := range subscribeTopicMappings {
+		topicIds = append(topicIds, mapping.TopicId)
+	}
+	return &model.SubscribeTopic{
+		Subscriber: model.Subscriber{
+			Uuid: subscriber.Uuid,
+			Type: subscriber.Type,
+		},
+		TopicIds: topicIds,
+	}, nil
 }

@@ -21,6 +21,7 @@ type TopicTemplateResp struct {
 	ID         int64     `json:"id"`
 	TopicId    int64     `json:"topic_id"`
 	Channel    string    `json:"channel"`
+	Name       string    `json:"name"`
 	Subject    string    `json:"subject"`
 	Content    string    `json:"content"`
 	Status     int       `json:"status"`
@@ -59,6 +60,7 @@ type TopicTemplateByTopicIdQuery struct {
 
 type TopicTemplateAddCmd struct {
 	TopicId int64  `json:"topic_id"`
+	Name    string `json:"name"`
 	Channel string `json:"channel"`
 	Subject string `json:"subject"`
 	Content string `json:"content"`
@@ -68,6 +70,7 @@ type TopicTemplateAddCmd struct {
 type TopicTemplateUpdateCmd struct {
 	ID      int64  `json:"id"`
 	TopicId int64  `json:"topic_id"`
+	Name    string `json:"name"`
 	Channel string `json:"channel"`
 	Subject string `json:"subject"`
 	Content string `json:"content"`

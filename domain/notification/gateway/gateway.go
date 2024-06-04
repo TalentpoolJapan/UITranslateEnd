@@ -27,4 +27,5 @@ type Gateway interface {
 
 	// subscribe
 	SubscribeTopic(subscribeTopic *model.SubscribeTopic) error
+	//ListSubscribeTopic(subscriber *model.Subscriber) (model.SubscribeTopic, error)
 }

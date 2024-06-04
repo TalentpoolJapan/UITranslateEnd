@@ -190,6 +190,19 @@ func (r *NotificationRepository) UpdateTrigger(trigger model.Trigger) error {
 
 // region subscribe
 
+func (r *NotificationRepository) ListSubscribeTopicMappingBySubscriber(subscriber *model.Subscriber) ([]*model.SubscribeTopicMapping, error) {
+	var subscribeTopicMappingPOs []*SubscribeTopicMappingPO
+	err := r.DB.Table(SubscriberTopicMappingTableName).Where("subscriber_uuid = ?", subscriber.Uuid).Find(&subscribeTopicMappingPOs)
+	if err != nil {
+		return nil, err
+	}
+	var subscribeTopicMappings []*model.SubscribeTopicMapping
+	for _, subscribeTopicMappingPO := range subscribeTopicMappingPOs {
+		subscribeTopicMappings = append(subscribeTopicMappings, subscribeTopicMappingPO.ConvertToEntity())
+	}
+	return subscribeTopicMappings, nil
+}
+
 func (r *NotificationRepository) SaveSubscribeTopicMapping(mapping []*model.SubscribeTopicMapping) error {
 	session := r.DB.NewSession()
 	defer session.Close()

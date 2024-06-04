@@ -23,6 +23,7 @@ type TopicInfo struct {
 type TopicTemplate struct {
 	ID         int64     `json:"id"`
 	TopicId    int64     `json:"topic_id"`
+	Name       string    `json:"name"`
 	Channel    Channel   `json:"channel"`
 	Subject    string    `json:"subject"`
 	Content    string    `json:"content"`

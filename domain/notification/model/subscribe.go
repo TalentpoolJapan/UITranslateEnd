@@ -20,7 +20,7 @@ func (s Subscriber) AcceptChannels(topicInfo TopicInfo) []Channel {
 
 type SubscribeTopicMapping struct {
 	SubscriberType SubscriberType `json:"subscriber_type"`
-	SubscriberUuid int64          `json:"subscriber_uuid"`
+	SubscriberUuid string         `json:"subscriber_uuid"`
 	TopicId        int64          `json:"topic_id"`
 }
 

@@ -26,6 +26,7 @@ type TopicInfoPO struct {
 type TopicTemplatePO struct {
 	Id         int64         `json:"id"`
 	TopicId    int64         `json:"topic"`
+	Name       string        `json:"name"`
 	Channel    model.Channel `json:"channel"`
 	Subject    string        `json:"subject"`
 	Content    string        `json:"content"`
@@ -45,7 +46,7 @@ type TriggerPO struct {
 
 type SubscribeTopicMappingPO struct {
 	SubscriberType model.SubscriberType `json:"subscriber_type"`
-	SubscriberUuid int64                `json:"subscriber_uuid"`
+	SubscriberUuid string               `json:"subscriber_uuid"`
 	TopicId        int64                `json:"topic_id"`
 }
 
@@ -80,6 +81,7 @@ func ConvertTopicTemplatePO(entity model.TopicTemplate) *TopicTemplatePO {
 		Id:         entity.ID,
 		TopicId:    entity.TopicId,
 		Channel:    entity.Channel,
+		Name:       entity.Name,
 		Subject:    entity.Subject,
 		Content:    entity.Content,
 		Status:     int(entity.Status),
@@ -93,6 +95,7 @@ func (po *TopicTemplatePO) ConvertToEntity() *model.TopicTemplate {
 		ID:         po.Id,
 		TopicId:    po.TopicId,
 		Channel:    po.Channel,
+		Name:       po.Name,
 		Subject:    po.Subject,
 		Content:    po.Content,
 		Status:     model.Status(po.Status),

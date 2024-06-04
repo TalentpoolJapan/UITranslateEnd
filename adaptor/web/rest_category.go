@@ -18,6 +18,7 @@ func RegisterCategoryHandler(engine *gin.Engine) {
 	engine.GET("/admin/category/list", AllCategory)
 	engine.POST("/admin/category", AddCategory)
 	engine.PUT("/admin/category", UpdateCategory)
+
 	engine.GET("/api/category/list/:name", CategoryListApiDataByName)
 	engine.GET("/api/category/:id", CategoryApiDataById)
 	engine.GET("/api/category/list", AllCategory)
@@ -53,6 +54,20 @@ func PageCategory(c *gin.Context) {
 }
 
 func AllCategory(c *gin.Context) {
+	parentId, err := strconv.Atoi(c.Query("parent_id"))
+	if err != nil {
+		parentId = 0
+	}
+
+	categories, bizErr := CategoryAppServ.AllCategoryByParentId(int64(parentId))
+	if bizErr != nil {
+		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: bizErr.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "", Data: categories})
+}
+
+func ApiAllCategory(c *gin.Context) {
 	parentId, err := strconv.Atoi(c.Query("parent_id"))
 	if err != nil {
 		parentId = 0
