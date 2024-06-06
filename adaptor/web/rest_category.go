@@ -21,7 +21,7 @@ func RegisterCategoryHandler(engine *gin.Engine) {
 
 	engine.GET("/api/category/list/:name", CategoryListApiDataByName)
 	engine.GET("/api/category/:id", CategoryApiDataById)
-	engine.GET("/api/category/list", AllCategory)
+	engine.GET("/api/category/list", ApiAllCategory)
 }
 
 func PageCategory(c *gin.Context) {
@@ -54,20 +54,6 @@ func PageCategory(c *gin.Context) {
 }
 
 func AllCategory(c *gin.Context) {
-	parentId, err := strconv.Atoi(c.Query("parent_id"))
-	if err != nil {
-		parentId = 0
-	}
-
-	categories, bizErr := CategoryAppServ.AllCategoryByParentId(int64(parentId))
-	if bizErr != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: bizErr.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "", Data: categories})
-}
-
-func ApiAllCategory(c *gin.Context) {
 	parentId, err := strconv.Atoi(c.Query("parent_id"))
 	if err != nil {
 		parentId = 0
@@ -134,27 +120,41 @@ func UpdateCategory(c *gin.Context) {
 func CategoryApiDataById(c *gin.Context) {
 	categoryId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, RestResult{Code: -1, Message: "Invalid category Id"})
+		c.JSON(http.StatusBadRequest, NewApiRestResult(RestResult{Code: -1, Message: "Invalid category Id"}))
 		return
 	}
 	data, err := CategoryAppServ.CategoryApiDataById(int64(categoryId))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: err.Error()})
+		c.JSON(http.StatusInternalServerError, NewApiRestResult(RestResult{Code: -1, Message: err.Error()}))
 		return
 	}
-	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "", Data: data})
+	c.JSON(http.StatusOK, NewApiRestResult(RestResult{Code: 0, Message: "", Data: data}))
 }
 
 func CategoryListApiDataByName(c *gin.Context) {
 	name := c.Param("name")
 	if name == "" {
-		c.JSON(http.StatusBadRequest, RestResult{Code: -1, Message: "Name is required"})
+		c.JSON(http.StatusBadRequest, NewApiRestResult(RestResult{Code: -1, Message: "Name is required"}))
 		return
 	}
 	data, err := CategoryAppServ.ListCategoryByParentName(name)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: err.Error()})
+		c.JSON(http.StatusInternalServerError, NewApiRestResult(RestResult{Code: -1, Message: err.Error()}))
 		return
 	}
-	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "", Data: data})
+	c.JSON(http.StatusOK, NewApiRestResult(RestResult{Code: 0, Message: "", Data: data}))
+}
+
+func ApiAllCategory(c *gin.Context) {
+	parentId, err := strconv.Atoi(c.Query("parent_id"))
+	if err != nil {
+		parentId = 0
+	}
+
+	categories, bizErr := CategoryAppServ.AllCategoryByParentId(int64(parentId))
+	if bizErr != nil {
+		c.JSON(http.StatusInternalServerError, NewApiRestResult(RestResult{Code: -1, Message: bizErr.Error()}))
+		return
+	}
+	c.JSON(http.StatusOK, NewApiRestResult(RestResult{Code: 0, Message: "", Data: categories}))
 }

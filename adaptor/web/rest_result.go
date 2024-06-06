@@ -15,3 +15,14 @@ type ApiRestResult struct {
 	Message string      `json:"message"`
 	Data    interface{} `json:"data,omitempty"`
 }
+
+func NewApiRestResult(restResult RestResult) ApiRestResult {
+	return ApiRestResult{
+		Code: ApiCode{
+			Msg:  restResult.Message,
+			Code: restResult.Code,
+		},
+		Message: restResult.Message,
+		Data:    restResult.Data,
+	}
+}
