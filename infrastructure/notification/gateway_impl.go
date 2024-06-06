@@ -46,7 +46,11 @@ func (g *GatewayImpl) GetTopicTemplateById(templateId int64) (*model.TopicTempla
 }
 
 func (g *GatewayImpl) ListTopicTemplateByTopicId(topicId int64) ([]*model.TopicTemplate, error) {
-	return g.notificationRepo.ListTopicTemplateByTopicId(topicId)
+	if topicId == 0 {
+		return g.notificationRepo.ListTopicTemplate()
+	} else {
+		return g.notificationRepo.ListTopicTemplateByTopicId(topicId)
+	}
 }
 
 func (g *GatewayImpl) SaveTopicTemplate(topicTemplate *model.TopicTemplate) error {

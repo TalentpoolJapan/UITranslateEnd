@@ -87,6 +87,20 @@ func (r *NotificationRepository) GetTopicTemplateById(templateId int64) (*model.
 	return topicTemplatePO.ConvertToEntity(), nil
 }
 
+func (r *NotificationRepository) ListTopicTemplate() ([]*model.TopicTemplate, error) {
+	var topicTemplatePOs []*TopicTemplatePO
+	err := r.DB.Table(TopicTemplateTableName).Find(&topicTemplatePOs)
+	if err != nil {
+		log.Printf("Error fetching topic templates: %v", err)
+		return nil, err
+	}
+	var topicTemplates []*model.TopicTemplate
+	for _, topicTemplatePO := range topicTemplatePOs {
+		topicTemplates = append(topicTemplates, topicTemplatePO.ConvertToEntity())
+	}
+	return topicTemplates, nil
+}
+
 func (r *NotificationRepository) ListTopicTemplateByTopicId(topicId int64) ([]*model.TopicTemplate, error) {
 	var topicTemplatePOs []*TopicTemplatePO
 	err := r.DB.Table(TopicTemplateTableName).Where("topic_id = ?", topicId).Find(&topicTemplatePOs)
