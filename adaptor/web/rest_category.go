@@ -137,7 +137,11 @@ func CategoryListApiDataByName(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, NewApiRestResult(RestResult{Code: -1, Message: "Name is required"}))
 		return
 	}
-	data, err := CategoryAppServ.ListCategoryByParentName(name)
+	language := c.GetHeader("Talentpool-Language")
+	if language == "" {
+		language = "english"
+	}
+	data, err := CategoryAppServ.ListCategoryByParentName(name, language)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, NewApiRestResult(RestResult{Code: -1, Message: err.Error()}))
 		return
