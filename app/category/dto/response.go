@@ -38,6 +38,7 @@ func ToDto(category *category.Category) *CategoryDetailResp {
 
 func ToDtoList(categories []*category.Category) []*CategoryDetailResp {
 	var arr []*CategoryDetailResp
+
 	for _, category := range categories {
 		arr = append(arr, ToDto(category))
 	}
