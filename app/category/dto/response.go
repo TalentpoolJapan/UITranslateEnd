@@ -13,6 +13,8 @@ type CategoryDetailResp struct {
 	NameEn    string `json:"name_en"`
 	NameJa    string `json:"name_ja"`
 	Status    int    `json:"status"`
+
+	Children []*CategoryDetailResp `json:"children"`
 }
 
 type CategoryPageResp struct {
