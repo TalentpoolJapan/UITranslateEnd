@@ -4,12 +4,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"uitranslate/app/notification"
-	"uitranslate/app/notification/impl"
 )
 
 var (
-	TopicAppServ   = impl.TopicAppServSingleton
-	TriggerAppServ = impl.TriggerAppServSingleton
+	TopicAppServ     notification.TopicAppServ
+	TriggerAppServ   notification.TriggerAppServ
+	SubscribeAppServ notification.SubscribeAppServ
 )
 
 func RegisterNotificationHandler(engine *gin.Engine) {
@@ -25,6 +25,22 @@ func RegisterNotificationHandler(engine *gin.Engine) {
 	engine.GET("/admin/notification/trigger/list", ListTriggers)
 	engine.POST("/admin/notification/trigger", AddTrigger)
 	engine.PUT("/admin/notification/trigger", UpdateTrigger)
+
+	// subscribe
+	engine.POST("/api/notification/subscribe", SubscribeTopic)
+}
+
+func SubscribeTopic(context *gin.Context) {
+	var cmd notification.SubscribeTopicCmd
+	if err := context.BindJSON(&cmd); err != nil {
+		context.JSON(http.StatusBadRequest, NewApiRestResult(RestResult{Code: -1, Message: err.Error()}))
+		return
+	}
+	if err := SubscribeAppServ.SubscribeTopic(cmd); err != nil {
+		context.JSON(http.StatusInternalServerError, NewApiRestResult(RestResult{Code: -1, Message: err.Error()}))
+		return
+	}
+	context.JSON(http.StatusOK, NewApiRestResult(RestResult{Code: 0, Message: "Subscribe successfully"}))
 }
 
 func ListTopic(c *gin.Context) {

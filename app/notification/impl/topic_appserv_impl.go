@@ -3,27 +3,23 @@ package impl
 import (
 	"fmt"
 	"uitranslate/app/notification"
+	notification2 "uitranslate/domain/notification"
 	"uitranslate/domain/notification/gateway"
-	"uitranslate/domain/notification/model"
-	inf "uitranslate/infrastructure/notification"
-)
-
-var (
-	TopicAppServSingleton = NewTopicAppServImpl()
+	"uitranslate/domain/notification/topic"
 )
 
 type TopicAppServImpl struct {
-	gateway gateway.Gateway
+	topicGateway gateway.TopicGateway
 }
 
-func NewTopicAppServImpl() notification.TopicAppServ {
+func NewTopicAppServImpl(topicGateway gateway.TopicGateway) notification.TopicAppServ {
 	return &TopicAppServImpl{
-		gateway: inf.GatewaySingleton,
+		topicGateway: topicGateway,
 	}
 }
 
 func (t *TopicAppServImpl) GetTopicInfoById(qry notification.TopicInfoByIdQry) (*notification.TopicInfoResp, error) {
-	topicInfo, err := t.gateway.GetTopicInfoById(qry.ID)
+	topicInfo, err := t.topicGateway.GetTopicInfoById(qry.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +36,7 @@ func (t *TopicAppServImpl) GetTopicInfoById(qry notification.TopicInfoByIdQry) (
 }
 
 func (t *TopicAppServImpl) ListTopicInfo() ([]*notification.TopicInfoResp, error) {
-	topicInfos, err := t.gateway.ListTopicInfo()
+	topicInfos, err := t.topicGateway.ListTopicInfo()
 	if err != nil {
 		return nil, err
 	}
@@ -61,28 +57,28 @@ func (t *TopicAppServImpl) ListTopicInfo() ([]*notification.TopicInfoResp, error
 }
 
 func (t *TopicAppServImpl) AddTopicInfo(cmd notification.TopicInfoAddCmd) error {
-	return t.gateway.SaveTopicInfo(&model.TopicInfo{
+	return t.topicGateway.SaveTopicInfo(&topic.TopicInfo{
 		Title:           cmd.Title,
 		Description:     cmd.Description,
-		Status:          model.Status(cmd.Status),
+		Status:          topic.Status(cmd.Status),
 		SubscribeTarget: cmd.SubscribeTarget,
 		TriggerId:       cmd.TriggerId,
 	})
 }
 
 func (t *TopicAppServImpl) UpdateTopicInfo(cmd notification.TopicInfoUpdateCmd) error {
-	return t.gateway.UpdateTopicInfo(&model.TopicInfo{
+	return t.topicGateway.UpdateTopicInfo(&topic.TopicInfo{
 		ID:              cmd.ID,
 		Title:           cmd.Title,
 		Description:     cmd.Description,
-		Status:          model.Status(cmd.Status),
+		Status:          topic.Status(cmd.Status),
 		SubscribeTarget: cmd.SubscribeTarget,
 		TriggerId:       cmd.TriggerId,
 	})
 }
 
 func (t *TopicAppServImpl) GetTopicTemplateById(qry notification.TopicTemplateByIdQry) (*notification.TopicTemplateResp, error) {
-	topicTemplate, err := t.gateway.GetTopicTemplateById(qry.ID)
+	topicTemplate, err := t.topicGateway.GetTopicTemplateById(qry.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +99,7 @@ func (t *TopicAppServImpl) GetTopicTemplateById(qry notification.TopicTemplateBy
 }
 
 func (t *TopicAppServImpl) ListTopicTemplateByTopicId(qry notification.TopicTemplateByTopicIdQuery) ([]*notification.TopicTemplateResp, error) {
-	topicTemplates, err := t.gateway.ListTopicTemplateByTopicId(qry.TopicId)
+	topicTemplates, err := t.topicGateway.ListTopicTemplateByTopicId(qry.TopicId)
 	if err != nil {
 		return nil, err
 	}
@@ -125,24 +121,24 @@ func (t *TopicAppServImpl) ListTopicTemplateByTopicId(qry notification.TopicTemp
 }
 
 func (t *TopicAppServImpl) AddTopicTemplate(cmd notification.TopicTemplateAddCmd) error {
-	return t.gateway.SaveTopicTemplate(&model.TopicTemplate{
+	return t.topicGateway.SaveTopicTemplate(&topic.TopicTemplate{
 		TopicId: cmd.TopicId,
 		Name:    cmd.Name,
-		Channel: model.Channel(cmd.Channel),
+		Channel: notification2.Channel(cmd.Channel),
 		Subject: cmd.Subject,
 		Content: cmd.Content,
-		Status:  model.Status(cmd.Status),
+		Status:  topic.Status(cmd.Status),
 	})
 }
 
 func (t *TopicAppServImpl) UpdateTopicTemplate(cmd notification.TopicTemplateUpdateCmd) error {
-	return t.gateway.UpdateTopicTemplate(&model.TopicTemplate{
+	return t.topicGateway.UpdateTopicTemplate(&topic.TopicTemplate{
 		ID:      cmd.ID,
 		TopicId: cmd.TopicId,
 		Name:    cmd.Name,
-		Channel: model.Channel(cmd.Channel),
+		Channel: notification2.Channel(cmd.Channel),
 		Subject: cmd.Subject,
 		Content: cmd.Content,
-		Status:  model.Status(cmd.Status),
+		Status:  topic.Status(cmd.Status),
 	})
 }

@@ -3,6 +3,8 @@ package repo
 import (
 	"log"
 	"uitranslate/domain/notification/model"
+	"uitranslate/domain/notification/subscribe"
+	"uitranslate/domain/notification/topic"
 	"uitranslate/infrastructure"
 	"xorm.io/xorm"
 )
@@ -23,7 +25,7 @@ func NewNotificationRepository(db *xorm.Engine) *NotificationRepository {
 
 // region topic info
 
-func (r *NotificationRepository) GetTopicInfoById(topicId int64) (*model.TopicInfo, error) {
+func (r *NotificationRepository) GetTopicInfoById(topicId int64) (*topic.TopicInfo, error) {
 	var topicInfoPO TopicInfoPO
 	has, err := r.DB.Table(TopicInfoTableName).ID(topicId).Get(&topicInfoPO)
 	if err != nil {
@@ -36,21 +38,21 @@ func (r *NotificationRepository) GetTopicInfoById(topicId int64) (*model.TopicIn
 	return topicInfoPO.ConvertToEntity(), nil
 }
 
-func (r *NotificationRepository) ListTopicInfo() ([]*model.TopicInfo, error) {
+func (r *NotificationRepository) ListTopicInfo() ([]*topic.TopicInfo, error) {
 	var topicInfoPOs []*TopicInfoPO
 	err := r.DB.Table(TopicInfoTableName).Find(&topicInfoPOs)
 	if err != nil {
 		log.Printf("Error fetching topic info: %v", err)
 		return nil, err
 	}
-	var topicInfos []*model.TopicInfo
+	var topicInfos []*topic.TopicInfo
 	for _, topicInfoPO := range topicInfoPOs {
 		topicInfos = append(topicInfos, topicInfoPO.ConvertToEntity())
 	}
 	return topicInfos, nil
 }
 
-func (r *NotificationRepository) SaveTopicInfo(topicInfo model.TopicInfo) error {
+func (r *NotificationRepository) SaveTopicInfo(topicInfo topic.TopicInfo) error {
 	topicInfoPO := ConvertTopicInfoPO(topicInfo)
 	_, err := r.DB.Table(TopicInfoTableName).Insert(topicInfoPO)
 	if err != nil {
@@ -60,7 +62,7 @@ func (r *NotificationRepository) SaveTopicInfo(topicInfo model.TopicInfo) error 
 	return nil
 }
 
-func (r *NotificationRepository) UpdateTopicInfo(topicInfo model.TopicInfo) error {
+func (r *NotificationRepository) UpdateTopicInfo(topicInfo topic.TopicInfo) error {
 	topicInfoPO := ConvertTopicInfoPO(topicInfo)
 	_, err := r.DB.Table(TopicInfoTableName).ID(topicInfo.ID).Update(topicInfoPO)
 	if err != nil {
@@ -74,7 +76,7 @@ func (r *NotificationRepository) UpdateTopicInfo(topicInfo model.TopicInfo) erro
 
 // region topic template
 
-func (r *NotificationRepository) GetTopicTemplateById(templateId int64) (*model.TopicTemplate, error) {
+func (r *NotificationRepository) GetTopicTemplateById(templateId int64) (*topic.TopicTemplate, error) {
 	var topicTemplatePO TopicTemplatePO
 	has, err := r.DB.Table(TopicTemplateTableName).ID(templateId).Get(&topicTemplatePO)
 	if err != nil {
@@ -87,35 +89,35 @@ func (r *NotificationRepository) GetTopicTemplateById(templateId int64) (*model.
 	return topicTemplatePO.ConvertToEntity(), nil
 }
 
-func (r *NotificationRepository) ListTopicTemplate() ([]*model.TopicTemplate, error) {
+func (r *NotificationRepository) ListTopicTemplate() ([]*topic.TopicTemplate, error) {
 	var topicTemplatePOs []*TopicTemplatePO
 	err := r.DB.Table(TopicTemplateTableName).Find(&topicTemplatePOs)
 	if err != nil {
 		log.Printf("Error fetching topic templates: %v", err)
 		return nil, err
 	}
-	var topicTemplates []*model.TopicTemplate
+	var topicTemplates []*topic.TopicTemplate
 	for _, topicTemplatePO := range topicTemplatePOs {
 		topicTemplates = append(topicTemplates, topicTemplatePO.ConvertToEntity())
 	}
 	return topicTemplates, nil
 }
 
-func (r *NotificationRepository) ListTopicTemplateByTopicId(topicId int64) ([]*model.TopicTemplate, error) {
+func (r *NotificationRepository) ListTopicTemplateByTopicId(topicId int64) ([]*topic.TopicTemplate, error) {
 	var topicTemplatePOs []*TopicTemplatePO
 	err := r.DB.Table(TopicTemplateTableName).Where("topic_id = ?", topicId).Find(&topicTemplatePOs)
 	if err != nil {
 		log.Printf("Error fetching topic templates: %v", err)
 		return nil, err
 	}
-	var topicTemplates []*model.TopicTemplate
+	var topicTemplates []*topic.TopicTemplate
 	for _, topicTemplatePO := range topicTemplatePOs {
 		topicTemplates = append(topicTemplates, topicTemplatePO.ConvertToEntity())
 	}
 	return topicTemplates, nil
 }
 
-func (r *NotificationRepository) SaveTopicTemplate(template model.TopicTemplate) error {
+func (r *NotificationRepository) SaveTopicTemplate(template topic.TopicTemplate) error {
 	topicTemplatePO := ConvertTopicTemplatePO(template)
 	_, err := r.DB.Table(TopicTemplateTableName).Insert(topicTemplatePO)
 	if err != nil {
@@ -125,7 +127,7 @@ func (r *NotificationRepository) SaveTopicTemplate(template model.TopicTemplate)
 	return nil
 }
 
-func (r *NotificationRepository) UpdateTopicTemplate(template model.TopicTemplate) error {
+func (r *NotificationRepository) UpdateTopicTemplate(template topic.TopicTemplate) error {
 	topicTemplatePO := ConvertTopicTemplatePO(template)
 	_, err := r.DB.Table(TopicTemplateTableName).ID(template.ID).Update(topicTemplatePO)
 	if err != nil {
@@ -204,51 +206,32 @@ func (r *NotificationRepository) UpdateTrigger(trigger model.Trigger) error {
 
 // region subscribe
 
-func (r *NotificationRepository) ListSubscribeTopicMappingBySubscriber(subscriber *model.Subscriber) ([]*model.SubscribeTopicMapping, error) {
+func (r *NotificationRepository) ListSubscribeTopicMappingBySubscriber(subscriber *subscribe.Subscriber) ([]*subscribe.SubscribeTopicMapping, error) {
 	var subscribeTopicMappingPOs []*SubscribeTopicMappingPO
-	err := r.DB.Table(SubscriberTopicMappingTableName).Where("subscriber_uuid = ?", subscriber.Uuid).Find(&subscribeTopicMappingPOs)
+	err := r.DB.Table(SubscriberTopicMappingTableName).Where("subscriber_uuid = ?", subscriber.Uuid).And("subscriber_type", subscriber.Type).Find(&subscribeTopicMappingPOs)
 	if err != nil {
 		return nil, err
 	}
-	var subscribeTopicMappings []*model.SubscribeTopicMapping
+	var subscribeTopicMappings []*subscribe.SubscribeTopicMapping
 	for _, subscribeTopicMappingPO := range subscribeTopicMappingPOs {
 		subscribeTopicMappings = append(subscribeTopicMappings, subscribeTopicMappingPO.ConvertToEntity())
 	}
 	return subscribeTopicMappings, nil
 }
 
-func (r *NotificationRepository) SaveSubscribeTopicMapping(mapping []*model.SubscribeTopicMapping) error {
-	session := r.DB.NewSession()
-	defer session.Close()
-
-	err := session.Begin()
+func (r *NotificationRepository) SaveSubscribeTopicMapping(mapping *subscribe.SubscribeTopicMapping) error {
+	_, err := r.DB.Table(SubscriberTopicMappingTableName).Insert(ConvertSubscribeTopicMappingPO(mapping))
 	if err != nil {
 		return err
 	}
-
-	for _, mapEntity := range mapping {
-		mapPO := ConvertSubscribeTopicMappingPO(*mapEntity)
-		_, err := session.Table(SubscriberTopicMappingTableName).Insert(mapPO)
-		if err != nil {
-			_ = session.Rollback()
-			return err
-		}
-	}
-
-	err = session.Commit()
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
-func (r *NotificationRepository) RemoveSubscribeTopicMappingBySubscriberId(subscriberUuid string) error {
-	_, err := r.DB.Table(SubscriberTopicMappingTableName).Where("subscriber_uuid = ?", subscriberUuid).Delete(&SubscribeTopicMappingPO{})
+func (r *NotificationRepository) RemoveSubscribeTopicMapping(mapping *subscribe.SubscribeTopicMapping) error {
+	_, err := r.DB.Table(SubscriberTopicMappingTableName).Where("subscriber_uuid = ?", mapping.SubscriberUuid).And("subscriber_type", mapping.SubscriberType).Delete(&SubscribeTopicMappingPO{})
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 

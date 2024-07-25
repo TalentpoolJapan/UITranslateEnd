@@ -5,20 +5,15 @@ import (
 	"uitranslate/app/notification"
 	"uitranslate/domain/notification/gateway"
 	"uitranslate/domain/notification/model"
-	inf "uitranslate/infrastructure/notification"
-)
-
-var (
-	TriggerAppServSingleton = NewTriggerAppServImpl()
 )
 
 type TriggerAppServImpl struct {
 	gateway gateway.Gateway
 }
 
-func NewTriggerAppServImpl() notification.TriggerAppServ {
+func NewTriggerAppServImpl(g gateway.Gateway) notification.TriggerAppServ {
 	return &TriggerAppServImpl{
-		gateway: inf.GatewaySingleton,
+		gateway: g,
 	}
 }
 

@@ -2,7 +2,6 @@ package notification
 
 import (
 	"time"
-	"uitranslate/domain/notification/model"
 )
 
 type TopicInfoResp struct {
@@ -13,8 +12,8 @@ type TopicInfoResp struct {
 	CreateTime  time.Time `json:"create_time"`
 	UpdateTime  time.Time `json:"update_time"`
 
-	SubscribeTarget model.SubscriberType `json:"subscribe_target"`
-	TriggerId       int64                `json:"trigger_id"`
+	SubscribeTarget string `json:"subscribe_target"`
+	TriggerId       int64  `json:"trigger_id"`
 }
 
 type TopicTemplateResp struct {
@@ -34,20 +33,20 @@ type TopicInfoByIdQry struct {
 }
 
 type TopicInfoAddCmd struct {
-	Title           string               `json:"title"`
-	Description     string               `json:"description"`
-	Status          int                  `json:"status"`
-	SubscribeTarget model.SubscriberType `json:"subscribe_target"`
-	TriggerId       int64                `json:"trigger_id"`
+	Title           string `json:"title"`
+	Description     string `json:"description"`
+	Status          int    `json:"status"`
+	SubscribeTarget string `json:"subscribe_target"`
+	TriggerId       int64  `json:"trigger_id"`
 }
 
 type TopicInfoUpdateCmd struct {
-	ID              int64                `json:"id"`
-	Title           string               `json:"title"`
-	Description     string               `json:"description"`
-	Status          int                  `json:"status"`
-	SubscribeTarget model.SubscriberType `json:"subscribe_target"`
-	TriggerId       int64                `json:"trigger_id"`
+	ID              int64  `json:"id"`
+	Title           string `json:"title"`
+	Description     string `json:"description"`
+	Status          int    `json:"status"`
+	SubscribeTarget string `json:"subscribe_target"`
+	TriggerId       int64  `json:"trigger_id"`
 }
 
 type TopicTemplateByIdQry struct {

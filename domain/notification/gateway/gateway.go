@@ -1,22 +1,14 @@
 package gateway
 
-import "uitranslate/domain/notification/model"
+import (
+	"uitranslate/domain/notification/model"
+	"uitranslate/domain/notification/topic"
+)
 
 type Gateway interface {
-	// topic
-	GetTopicInfoById(topicId int64) (*model.TopicInfo, error)
-	ListTopicInfo() ([]*model.TopicInfo, error)
-	SaveTopicInfo(topicInfo *model.TopicInfo) error
-	UpdateTopicInfo(topicInfo *model.TopicInfo) error
-
-	// topic template
-	GetTopicTemplateById(templateId int64) (*model.TopicTemplate, error)
-	ListTopicTemplateByTopicId(topicId int64) ([]*model.TopicTemplate, error)
-	SaveTopicTemplate(topicTemplate *model.TopicTemplate) error
-	UpdateTopicTemplate(topicTemplate *model.TopicTemplate) error
 
 	// aggregate topic
-	GetAggregateTopicById(topicId int64) (*model.AggregateTopic, error)
+	GetAggregateTopicById(topicId int64) (*topic.AggregateTopic, error)
 
 	// trigger
 	GetTriggerById(triggerId int64) (*model.Trigger, error)
@@ -24,8 +16,4 @@ type Gateway interface {
 	ListTrigger() ([]*model.Trigger, error)
 	SaveTrigger(trigger *model.Trigger) error
 	UpdateTrigger(trigger *model.Trigger) error
-
-	// subscribe
-	SubscribeTopic(subscribeTopic *model.SubscribeTopic) error
-	//ListSubscribeTopic(subscriber *model.Subscriber) (model.SubscribeTopic, error)
 }

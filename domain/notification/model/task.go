@@ -2,6 +2,8 @@ package model
 
 import (
 	"errors"
+	"uitranslate/domain/notification/subscribe"
+	"uitranslate/domain/notification/topic"
 )
 
 type Task struct {
@@ -17,7 +19,7 @@ func (t *Task) ExecuteTask() error {
 
 	subscribers := querySubscriber(topic.TopicInfo)
 	if len(subscribers) == 0 {
-		return errors.New("no subscriber found")
+		return errors.New("no subscribe found")
 	}
 
 	for _, subscriber := range subscribers {
@@ -30,7 +32,7 @@ func (t *Task) ExecuteTask() error {
 	return nil
 }
 
-func querySubscriber(topic TopicInfo) []*Subscriber {
+func querySubscriber(topic topic.TopicInfo) []*subscribe.Subscriber {
 	// todo 这里需要实现查询订阅了topic的subscriber的逻辑
 	return nil
 }
@@ -45,12 +47,12 @@ func renderTemplate() (string, error) {
 	return "", errors.New("failed to render template")
 }
 
-func (t *Task) getTopic() (AggregateTopic, error) {
+func (t *Task) getTopic() (topic.AggregateTopic, error) {
 	// todo 这里需要实现获取topic信息的逻辑
-	return AggregateTopic{}, nil
+	return topic.AggregateTopic{}, nil
 }
 
-func (t *Task) sendToSubscriber(subscriber *Subscriber, topic AggregateTopic) error {
+func (t *Task) sendToSubscriber(subscriber *subscribe.Subscriber, topic topic.AggregateTopic) error {
 	// todo 这里需要实现将消息发送给subscriber的逻辑
 	channels := subscriber.AcceptChannels(topic.TopicInfo)
 	if len(channels) == 0 {
@@ -58,7 +60,7 @@ func (t *Task) sendToSubscriber(subscriber *Subscriber, topic AggregateTopic) er
 	}
 
 	for _, channel := range channels {
-		template, err := topic.selectTemplate(channel)
+		template, err := topic.SelectTemplate(channel)
 		if err != nil {
 			// todo log
 			continue
@@ -68,7 +70,7 @@ func (t *Task) sendToSubscriber(subscriber *Subscriber, topic AggregateTopic) er
 	return nil
 }
 
-func doSent(template *TopicTemplate, subscriber *Subscriber) error {
+func doSent(template *topic.TopicTemplate, subscriber *subscribe.Subscriber) error {
 	// todo
 	// 3.2 加载、渲染模版
 	//content, err := renderTemplate()

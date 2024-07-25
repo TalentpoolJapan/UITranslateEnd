@@ -22,6 +22,7 @@ func RegisterCategoryHandler(engine *gin.Engine) {
 	engine.GET("/api/category/list/:name", CategoryListApiDataByName)
 	engine.GET("/api/category/:id", CategoryApiDataById)
 	engine.GET("/api/category/list", ApiAllCategory)
+	engine.GET("/api/category", ApiAllCategory)
 }
 
 func PageCategory(c *gin.Context) {

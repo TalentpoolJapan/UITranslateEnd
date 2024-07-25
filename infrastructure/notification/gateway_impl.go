@@ -2,22 +2,21 @@ package notification
 
 import (
 	"uitranslate/domain/notification/model"
+	"uitranslate/domain/notification/topic"
 	"uitranslate/infrastructure/notification/repo"
 )
-
-var GatewaySingleton = NewGatewayImpl()
 
 type GatewayImpl struct {
 	notificationRepo repo.NotificationRepository
 }
 
-func NewGatewayImpl() *GatewayImpl {
+func newGatewayImpl(r repo.NotificationRepository) *GatewayImpl {
 	return &GatewayImpl{
-		notificationRepo: *repo.Repo,
+		notificationRepo: r,
 	}
 }
 
-func (g *GatewayImpl) GetTopicInfoById(topicId int64) (*model.TopicInfo, error) {
+func (g *GatewayImpl) GetTopicInfoById(topicId int64) (*topic.TopicInfo, error) {
 	topicInfo, err := g.notificationRepo.GetTopicInfoById(topicId)
 	if err != nil {
 		return nil, err
@@ -25,7 +24,7 @@ func (g *GatewayImpl) GetTopicInfoById(topicId int64) (*model.TopicInfo, error) 
 	return topicInfo, nil
 }
 
-func (g *GatewayImpl) ListTopicInfo() ([]*model.TopicInfo, error) {
+func (g *GatewayImpl) ListTopicInfo() ([]*topic.TopicInfo, error) {
 	topicInfos, err := g.notificationRepo.ListTopicInfo()
 	if err != nil {
 		return nil, err
@@ -33,19 +32,19 @@ func (g *GatewayImpl) ListTopicInfo() ([]*model.TopicInfo, error) {
 	return topicInfos, nil
 }
 
-func (g *GatewayImpl) SaveTopicInfo(topicInfo *model.TopicInfo) error {
+func (g *GatewayImpl) SaveTopicInfo(topicInfo *topic.TopicInfo) error {
 	return g.notificationRepo.SaveTopicInfo(*topicInfo)
 }
 
-func (g *GatewayImpl) UpdateTopicInfo(topicInfo *model.TopicInfo) error {
+func (g *GatewayImpl) UpdateTopicInfo(topicInfo *topic.TopicInfo) error {
 	return g.notificationRepo.UpdateTopicInfo(*topicInfo)
 }
 
-func (g *GatewayImpl) GetTopicTemplateById(templateId int64) (*model.TopicTemplate, error) {
+func (g *GatewayImpl) GetTopicTemplateById(templateId int64) (*topic.TopicTemplate, error) {
 	return g.notificationRepo.GetTopicTemplateById(templateId)
 }
 
-func (g *GatewayImpl) ListTopicTemplateByTopicId(topicId int64) ([]*model.TopicTemplate, error) {
+func (g *GatewayImpl) ListTopicTemplateByTopicId(topicId int64) ([]*topic.TopicTemplate, error) {
 	if topicId == 0 {
 		return g.notificationRepo.ListTopicTemplate()
 	} else {
@@ -53,15 +52,15 @@ func (g *GatewayImpl) ListTopicTemplateByTopicId(topicId int64) ([]*model.TopicT
 	}
 }
 
-func (g *GatewayImpl) SaveTopicTemplate(topicTemplate *model.TopicTemplate) error {
+func (g *GatewayImpl) SaveTopicTemplate(topicTemplate *topic.TopicTemplate) error {
 	return g.notificationRepo.SaveTopicTemplate(*topicTemplate)
 }
 
-func (g *GatewayImpl) UpdateTopicTemplate(topicTemplate *model.TopicTemplate) error {
+func (g *GatewayImpl) UpdateTopicTemplate(topicTemplate *topic.TopicTemplate) error {
 	return g.notificationRepo.UpdateTopicTemplate(*topicTemplate)
 }
 
-func (g *GatewayImpl) GetAggregateTopicById(topicId int64) (*model.AggregateTopic, error) {
+func (g *GatewayImpl) GetAggregateTopicById(topicId int64) (*topic.AggregateTopic, error) {
 	// todo
 	return nil, nil
 }
@@ -84,43 +83,4 @@ func (g *GatewayImpl) SaveTrigger(trigger *model.Trigger) error {
 
 func (g *GatewayImpl) UpdateTrigger(trigger *model.Trigger) error {
 	return g.notificationRepo.UpdateTrigger(*trigger)
-}
-
-func (g *GatewayImpl) SubscribeTopic(subscribeTopic *model.SubscribeTopic) error {
-	rmErr := g.notificationRepo.RemoveSubscribeTopicMappingBySubscriberId(subscribeTopic.Subscriber.Uuid)
-	if rmErr != nil {
-		return rmErr
-	}
-
-	var mappings []*model.SubscribeTopicMapping
-	for _, topicId := range subscribeTopic.TopicIds {
-		mappings = append(mappings, &model.SubscribeTopicMapping{
-			SubscriberType: subscribeTopic.Subscriber.Type,
-			SubscriberUuid: subscribeTopic.Subscriber.Uuid,
-			TopicId:        topicId,
-		})
-	}
-	saveErr := g.notificationRepo.SaveSubscribeTopicMapping(mappings)
-	if saveErr != nil {
-		return saveErr
-	}
-	return nil
-}
-
-func (g *GatewayImpl) ListSubscribeTopic(subscriber *model.Subscriber) (*model.SubscribeTopic, error) {
-	subscribeTopicMappings, err := g.notificationRepo.ListSubscribeTopicMappingBySubscriber(subscriber)
-	if err != nil {
-		return nil, err
-	}
-	var topicIds []int64
-	for _, mapping := range subscribeTopicMappings {
-		topicIds = append(topicIds, mapping.TopicId)
-	}
-	return &model.SubscribeTopic{
-		Subscriber: model.Subscriber{
-			Uuid: subscriber.Uuid,
-			Type: subscriber.Type,
-		},
-		TopicIds: topicIds,
-	}, nil
 }

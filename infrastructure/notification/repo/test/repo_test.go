@@ -3,14 +3,13 @@ package repo_test
 import (
 	"testing"
 	"time"
+	"uitranslate/domain/notification/topic"
 	"uitranslate/infrastructure/notification/repo"
 	"xorm.io/xorm/core"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 	"xorm.io/xorm"
-
-	"uitranslate/domain/notification/model"
 )
 
 func setupMockDB() (*xorm.Engine, sqlmock.Sqlmock, error) {
@@ -102,11 +101,11 @@ func TestSaveTopicInfo(t *testing.T) {
 	defer engine.Close()
 
 	notificationRepo := repo.NewNotificationRepository(engine)
-	topicInfo := model.TopicInfo{
+	topicInfo := topic.TopicInfo{
 		ID:              1,
 		Title:           "Test Title",
 		Description:     "Test Description",
-		Status:          model.Status(1),
+		Status:          topic.Status(1),
 		CreateTime:      time.Now(),
 		UpdateTime:      time.Now(),
 		SubscribeTarget: "Test Target",
@@ -125,11 +124,11 @@ func TestUpdateTopicInfo(t *testing.T) {
 	defer engine.Close()
 
 	notificationRepo := repo.NewNotificationRepository(engine)
-	topicInfo := model.TopicInfo{
+	topicInfo := topic.TopicInfo{
 		ID:              1,
 		Title:           "Updated Title",
 		Description:     "Updated Description",
-		Status:          model.Status(1),
+		Status:          topic.Status(1),
 		CreateTime:      time.Now(),
 		UpdateTime:      time.Now(),
 		SubscribeTarget: "Updated Target",

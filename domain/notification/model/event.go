@@ -1,5 +1,7 @@
 package model
 
+import "uitranslate/domain/notification/topic"
+
 type EventType string
 
 const (
@@ -10,6 +12,6 @@ const (
 )
 
 type EventTypeSetting struct {
-	EventType EventType `json:"event_type"`
-	Topic     TopicInfo `json:"topic"`
+	EventType EventType       `json:"event_type"`
+	Topic     topic.TopicInfo `json:"topic"`
 }
