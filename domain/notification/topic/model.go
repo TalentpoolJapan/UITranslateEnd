@@ -8,7 +8,7 @@ import (
 
 type Status int
 
-type TopicInfo struct {
+type BasicInfo struct {
 	ID          int64     `json:"id"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
@@ -20,7 +20,7 @@ type TopicInfo struct {
 	TriggerId       int64  `json:"trigger_id"`
 }
 
-type TopicTemplate struct {
+type Template struct {
 	ID         int64                `json:"id"`
 	TopicId    int64                `json:"topic_id"`
 	Name       string               `json:"name"`
@@ -33,15 +33,15 @@ type TopicTemplate struct {
 }
 
 type AggregateTopic struct {
-	TopicInfo TopicInfo        `json:"topicInfo"`
-	Templates []*TopicTemplate `json:"templates"`
+	TopicInfo BasicInfo   `json:"topicInfo"`
+	Templates []*Template `json:"templates"`
 }
 
-func (t *AggregateTopic) SelectTemplate(channel notification.Channel) (*TopicTemplate, error) {
+func (t *AggregateTopic) SelectTemplate(channel notification.Channel) (*Template, error) {
 	for _, template := range t.Templates {
 		if template.Channel == channel {
 			return template, nil
 		}
 	}
-	return &TopicTemplate{}, errors.New("template not found")
+	return &Template{}, errors.New("template not found")
 }

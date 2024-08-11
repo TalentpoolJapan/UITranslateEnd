@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	notification2 "uitranslate/app/notification"
 	"uitranslate/domain/notification"
 	"uitranslate/domain/notification/subscriber"
 	"uitranslate/domain/notification/topic"
@@ -9,7 +10,7 @@ import (
 
 type Task struct {
 	TopicId  int64
-	Producer Producer
+	Producer notification2.Producer
 }
 
 func (t *Task) ExecuteTask() error {
@@ -33,7 +34,7 @@ func (t *Task) ExecuteTask() error {
 	return nil
 }
 
-func querySubscriber(topic topic.TopicInfo) []*subscriber.Subscriber {
+func querySubscriber(topic topic.BasicInfo) []*subscriber.Subscriber {
 	// todo 这里需要实现查询订阅了topic的subscriber的逻辑
 	return nil
 }
@@ -71,7 +72,7 @@ func (t *Task) sendToSubscriber(subscriber *subscriber.Subscriber, topic topic.A
 	return nil
 }
 
-func doSent(template *topic.TopicTemplate, subscriber *subscriber.Subscriber) error {
+func doSent(template *topic.Template, subscriber *subscriber.Subscriber) error {
 	// todo
 	// 3.2 加载、渲染模版
 	//content, err := renderTemplate()

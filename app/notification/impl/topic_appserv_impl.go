@@ -4,15 +4,14 @@ import (
 	"fmt"
 	"uitranslate/app/notification"
 	notification2 "uitranslate/domain/notification"
-	"uitranslate/domain/notification/gateway"
 	"uitranslate/domain/notification/topic"
 )
 
 type TopicAppServImpl struct {
-	topicGateway gateway.TopicGateway
+	topicGateway topic.Repository
 }
 
-func NewTopicAppServImpl(topicGateway gateway.TopicGateway) notification.TopicAppServ {
+func NewTopicAppServImpl(topicGateway topic.Repository) notification.TopicAppServ {
 	return &TopicAppServImpl{
 		topicGateway: topicGateway,
 	}
@@ -57,7 +56,7 @@ func (t *TopicAppServImpl) ListTopicInfo() ([]*notification.TopicInfoResp, error
 }
 
 func (t *TopicAppServImpl) AddTopicInfo(cmd notification.TopicInfoAddCmd) error {
-	return t.topicGateway.SaveTopicInfo(&topic.TopicInfo{
+	return t.topicGateway.SaveTopicInfo(&topic.BasicInfo{
 		Title:           cmd.Title,
 		Description:     cmd.Description,
 		Status:          topic.Status(cmd.Status),
@@ -67,7 +66,7 @@ func (t *TopicAppServImpl) AddTopicInfo(cmd notification.TopicInfoAddCmd) error 
 }
 
 func (t *TopicAppServImpl) UpdateTopicInfo(cmd notification.TopicInfoUpdateCmd) error {
-	return t.topicGateway.UpdateTopicInfo(&topic.TopicInfo{
+	return t.topicGateway.UpdateTopicInfo(&topic.BasicInfo{
 		ID:              cmd.ID,
 		Title:           cmd.Title,
 		Description:     cmd.Description,
@@ -121,7 +120,7 @@ func (t *TopicAppServImpl) ListTopicTemplateByTopicId(qry notification.TopicTemp
 }
 
 func (t *TopicAppServImpl) AddTopicTemplate(cmd notification.TopicTemplateAddCmd) error {
-	return t.topicGateway.SaveTopicTemplate(&topic.TopicTemplate{
+	return t.topicGateway.SaveTopicTemplate(&topic.Template{
 		TopicId: cmd.TopicId,
 		Name:    cmd.Name,
 		Channel: notification2.Channel(cmd.Channel),
@@ -132,7 +131,7 @@ func (t *TopicAppServImpl) AddTopicTemplate(cmd notification.TopicTemplateAddCmd
 }
 
 func (t *TopicAppServImpl) UpdateTopicTemplate(cmd notification.TopicTemplateUpdateCmd) error {
-	return t.topicGateway.UpdateTopicTemplate(&topic.TopicTemplate{
+	return t.topicGateway.UpdateTopicTemplate(&topic.Template{
 		ID:      cmd.ID,
 		TopicId: cmd.TopicId,
 		Name:    cmd.Name,

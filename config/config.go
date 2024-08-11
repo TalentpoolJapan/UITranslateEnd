@@ -2,14 +2,16 @@ package config
 
 import (
 	"uitranslate/app/notification"
-	nf_gateway "uitranslate/domain/notification/gateway"
+	"uitranslate/domain/notification/subscriber"
+	"uitranslate/domain/notification/topic"
+	nf_gateway "uitranslate/domain/notification/trigger"
 )
 
 var (
 	subscribeAppServ *notification.SubscribeAppServ
 	topicAppServ     *notification.TopicAppServ
 
-	notificationGateway nf_gateway.Gateway
-	topicGateway        nf_gateway.TopicGateway
-	userGateway         nf_gateway.UserGateway
+	notificationGateway nf_gateway.Repository
+	topicGateway        topic.Repository
+	userGateway         subscriber.IGateway
 )

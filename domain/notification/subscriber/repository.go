@@ -1,7 +1,6 @@
 package subscriber
 
-type SubscribeRepo interface {
-	ListSubscribeTopicMappingBySubscriber(subscriber *Subscriber) ([]*SubscribeTopicMapping, error)
-	SaveSubscribeTopicMapping(mapping *SubscribeTopicMapping) error
-	RemoveSubscribeTopicMapping(mapping *SubscribeTopicMapping) error
+type IRepository interface {
+	ListSubscribedTopicIdsBySubscriber(userType Type, userUuid string) ([]int64, error)
+	SaveSubscriberTopic(subscriber *Subscriber) error
 }

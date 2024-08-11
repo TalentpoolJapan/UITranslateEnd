@@ -1,4 +1,4 @@
-package model
+package notification
 
 import "uitranslate/domain/notification/topic"
 
@@ -13,5 +13,5 @@ const (
 
 type EventTypeSetting struct {
 	EventType EventType       `json:"event_type"`
-	Topic     topic.TopicInfo `json:"topic"`
+	Topic     topic.BasicInfo `json:"topic"`
 }

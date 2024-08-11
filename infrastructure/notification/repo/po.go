@@ -3,9 +3,9 @@ package repo
 import (
 	"time"
 	"uitranslate/domain/notification"
-	"uitranslate/domain/notification/model"
 	"uitranslate/domain/notification/subscriber"
 	"uitranslate/domain/notification/topic"
+	"uitranslate/domain/notification/trigger"
 )
 
 const (
@@ -54,7 +54,7 @@ type SubscribeTopicMappingPO struct {
 	TopicId        int64           `json:"topic_id"`
 }
 
-func ConvertTopicInfoPO(entity topic.TopicInfo) *TopicInfoPO {
+func ConvertTopicInfoPO(entity topic.BasicInfo) *TopicInfoPO {
 	return &TopicInfoPO{
 		Id:              entity.ID,
 		Title:           entity.Title,
@@ -67,8 +67,8 @@ func ConvertTopicInfoPO(entity topic.TopicInfo) *TopicInfoPO {
 	}
 }
 
-func (po *TopicInfoPO) ConvertToEntity() *topic.TopicInfo {
-	return &topic.TopicInfo{
+func (po *TopicInfoPO) ConvertToEntity() *topic.BasicInfo {
+	return &topic.BasicInfo{
 		ID:              po.Id,
 		Title:           po.Title,
 		Description:     po.Description,
@@ -80,7 +80,7 @@ func (po *TopicInfoPO) ConvertToEntity() *topic.TopicInfo {
 	}
 }
 
-func ConvertTopicTemplatePO(entity topic.TopicTemplate) *TopicTemplatePO {
+func ConvertTopicTemplatePO(entity topic.Template) *TopicTemplatePO {
 	return &TopicTemplatePO{
 		Id:         entity.ID,
 		TopicId:    entity.TopicId,
@@ -94,8 +94,8 @@ func ConvertTopicTemplatePO(entity topic.TopicTemplate) *TopicTemplatePO {
 	}
 }
 
-func (po *TopicTemplatePO) ConvertToEntity() *topic.TopicTemplate {
-	return &topic.TopicTemplate{
+func (po *TopicTemplatePO) ConvertToEntity() *topic.Template {
+	return &topic.Template{
 		ID:         po.Id,
 		TopicId:    po.TopicId,
 		Channel:    po.Channel,
@@ -108,7 +108,7 @@ func (po *TopicTemplatePO) ConvertToEntity() *topic.TopicTemplate {
 	}
 }
 
-func ConvertTriggerPO(entity model.Trigger) *TriggerPO {
+func ConvertTriggerPO(entity trigger.Trigger) *TriggerPO {
 	return &TriggerPO{
 		Id:         entity.ID,
 		Name:       entity.Name,
@@ -119,32 +119,14 @@ func ConvertTriggerPO(entity model.Trigger) *TriggerPO {
 	}
 }
 
-func (po *TriggerPO) ConvertToEntity() *model.Trigger {
-	return &model.Trigger{
+func (po *TriggerPO) ConvertToEntity() *trigger.Trigger {
+	return &trigger.Trigger{
 		ID:         po.Id,
 		Name:       po.Name,
 		Immediate:  intToBool(po.Immediate),
 		Frequency:  po.Frequency,
 		CreateTime: po.CreateTime,
 		UpdateTime: po.UpdateTime,
-	}
-}
-
-func ConvertSubscribeTopicMappingPO(entity *subscriber.SubscribeTopicMapping) *SubscribeTopicMappingPO {
-	return &SubscribeTopicMappingPO{
-		Id:             entity.ID,
-		SubscriberType: entity.SubscriberType,
-		SubscriberUuid: entity.SubscriberUuid,
-		TopicId:        entity.TopicId,
-	}
-}
-
-func (po *SubscribeTopicMappingPO) ConvertToEntity() *subscriber.SubscribeTopicMapping {
-	return &subscriber.SubscribeTopicMapping{
-		ID:             po.Id,
-		SubscriberType: po.SubscriberType,
-		SubscriberUuid: po.SubscriberUuid,
-		TopicId:        po.TopicId,
 	}
 }
 

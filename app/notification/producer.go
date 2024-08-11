@@ -1,12 +1,17 @@
-package model
+package notification
 
 import (
 	"errors"
+	"uitranslate/domain/notification"
 	"uitranslate/domain/notification/topic"
+	"uitranslate/domain/notification/trigger"
 )
 
 type Producer struct {
-	EventType EventType
+	topicRepo   topic.Repository
+	triggerRepo trigger.Repository
+
+	EventType notification.EventType
 	EventData interface{}
 }
 
@@ -35,19 +40,19 @@ func (p *Producer) Publish() error {
 	return nil
 }
 
-func (p *Producer) findTopicByEventType(eventType EventType) (topic.TopicInfo, error) {
+func (p *Producer) findTopicByEventType(eventType notification.EventType) (topic.BasicInfo, error) {
 	// 这里需要实现查找与事件类型关联的主题的逻辑
 	// 如果找不到主题，返回错误
-	return topic.TopicInfo{}, errors.New("topic not found")
+	return topic.BasicInfo{}, errors.New("topic not found")
 }
 
-func (p *Producer) findTriggerByTopic(topic topic.TopicInfo) (Trigger, error) {
+func (p *Producer) findTriggerByTopic(topic topic.BasicInfo) (trigger.Trigger, error) {
 	// 这里需要实现查找与主题关联的触发器的逻辑
 	// 如果找不到触发器，返回错误
-	return Trigger{}, errors.New("trigger not found")
+	return trigger.Trigger{}, errors.New("trigger not found")
 }
 
-func (p *Producer) handleTopic(topic topic.TopicInfo, eventData interface{}) error {
+func (p *Producer) handleTopic(topic topic.BasicInfo, eventData interface{}) error {
 	// 这里需要实现处理主题的逻辑
 	// 这可能包括将主题和事件数据发送给任务执行器等
 	return nil

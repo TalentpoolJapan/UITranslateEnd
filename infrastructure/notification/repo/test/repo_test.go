@@ -101,7 +101,7 @@ func TestSaveTopicInfo(t *testing.T) {
 	defer engine.Close()
 
 	notificationRepo := repo.NewNotificationRepository(engine)
-	topicInfo := topic.TopicInfo{
+	topicInfo := topic.BasicInfo{
 		ID:              1,
 		Title:           "Test Title",
 		Description:     "Test Description",
@@ -124,7 +124,7 @@ func TestUpdateTopicInfo(t *testing.T) {
 	defer engine.Close()
 
 	notificationRepo := repo.NewNotificationRepository(engine)
-	topicInfo := topic.TopicInfo{
+	topicInfo := topic.BasicInfo{
 		ID:              1,
 		Title:           "Updated Title",
 		Description:     "Updated Description",

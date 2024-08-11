@@ -3,15 +3,14 @@ package impl
 import (
 	"fmt"
 	"uitranslate/app/notification"
-	"uitranslate/domain/notification/gateway"
-	"uitranslate/domain/notification/model"
+	"uitranslate/domain/notification/trigger"
 )
 
 type TriggerAppServImpl struct {
-	gateway gateway.Gateway
+	gateway trigger.Repository
 }
 
-func NewTriggerAppServImpl(g gateway.Gateway) notification.TriggerAppServ {
+func NewTriggerAppServImpl(g trigger.Repository) notification.TriggerAppServ {
 	return &TriggerAppServImpl{
 		gateway: g,
 	}
@@ -55,7 +54,7 @@ func (t *TriggerAppServImpl) ListTrigger() ([]*notification.TriggerResp, error) 
 }
 
 func (t *TriggerAppServImpl) AddTrigger(cmd *notification.TriggerAddCmd) error {
-	return t.gateway.SaveTrigger(&model.Trigger{
+	return t.gateway.SaveTrigger(&trigger.Trigger{
 		Name:      cmd.Name,
 		Immediate: cmd.Immediate,
 		Frequency: cmd.Frequency,
@@ -63,7 +62,7 @@ func (t *TriggerAppServImpl) AddTrigger(cmd *notification.TriggerAddCmd) error {
 }
 
 func (t *TriggerAppServImpl) UpdateTrigger(cmd *notification.TriggerUpdateCmd) error {
-	return t.gateway.UpdateTrigger(&model.Trigger{
+	return t.gateway.UpdateTrigger(&trigger.Trigger{
 		ID:        cmd.ID,
 		Name:      cmd.Name,
 		Immediate: cmd.Immediate,

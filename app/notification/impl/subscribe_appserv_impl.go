@@ -4,20 +4,19 @@ import (
 	"errors"
 	"log"
 	"uitranslate/app/notification"
-	"uitranslate/domain/notification/gateway"
 	"uitranslate/domain/notification/subscriber"
 	"uitranslate/domain/notification/topic"
 )
 
 type SubscribeAppServImpl struct {
-	userGateway         gateway.UserGateway
-	topicGateway        gateway.TopicGateway
-	subscribeDomainServ subscriber.SubscribeDomainService
+	userGateway         subscriber.IGateway
+	topicGateway        topic.Repository
+	subscribeDomainServ subscriber.IDomainService
 }
 
-func NewSubscribeAppServImpl(userGateway gateway.UserGateway,
-	topicGateway gateway.TopicGateway,
-	subscribeDomainServ subscriber.SubscribeDomainService) notification.SubscribeAppServ {
+func NewSubscribeAppServImpl(userGateway subscriber.IGateway,
+	topicGateway topic.Repository,
+	subscribeDomainServ subscriber.IDomainService) notification.SubscribeAppServ {
 	return &SubscribeAppServImpl{
 		userGateway:         userGateway,
 		topicGateway:        topicGateway,
@@ -73,8 +72,8 @@ func (s *SubscribeAppServImpl) UnsubscribeTopic(cmd notification.UnsubscribeTopi
 	return nil
 }
 
-func (s *SubscribeAppServImpl) checkSubscriber(uuid string, userType string) (*gateway.ExternalUserInfo, error) {
-	userInfo, getUserErr := s.userGateway.GetUserInfo(uuid, userType)
+func (s *SubscribeAppServImpl) checkSubscriber(uuid string, userType string) (*subscriber.ExternalJobseekerInfo, error) {
+	userInfo, getUserErr := s.userGateway.GetJobseekerInfo(uuid, userType)
 	if getUserErr != nil || userInfo == nil {
 		log.Printf("%s-%s find user info error: %v", uuid, userType, getUserErr)
 		return nil, errors.New("user not found")
@@ -82,7 +81,7 @@ func (s *SubscribeAppServImpl) checkSubscriber(uuid string, userType string) (*g
 	return userInfo, nil
 }
 
-func (s *SubscribeAppServImpl) checkTopicInfo(topicId int64) (*topic.TopicInfo, error) {
+func (s *SubscribeAppServImpl) checkTopicInfo(topicId int64) (*topic.BasicInfo, error) {
 	topicInfo, getTopicErr := s.topicGateway.GetTopicInfoById(topicId)
 	if getTopicErr != nil || topicInfo == nil {
 		log.Printf("%d find topic info", topicId)
