@@ -3,7 +3,7 @@ package repo
 import (
 	"log"
 	"uitranslate/domain/notification/model"
-	"uitranslate/domain/notification/subscribe"
+	"uitranslate/domain/notification/subscriber"
 	"uitranslate/domain/notification/topic"
 	"uitranslate/infrastructure"
 	"xorm.io/xorm"
@@ -204,22 +204,22 @@ func (r *NotificationRepository) UpdateTrigger(trigger model.Trigger) error {
 
 // endregion
 
-// region subscribe
+// region subscriber
 
-func (r *NotificationRepository) ListSubscribeTopicMappingBySubscriber(subscriber *subscribe.Subscriber) ([]*subscribe.SubscribeTopicMapping, error) {
+func (r *NotificationRepository) ListSubscribeTopicMappingBySubscriber(subscriber *subscriber.Subscriber) ([]*subscriber.SubscribeTopicMapping, error) {
 	var subscribeTopicMappingPOs []*SubscribeTopicMappingPO
 	err := r.DB.Table(SubscriberTopicMappingTableName).Where("subscriber_uuid = ?", subscriber.Uuid).And("subscriber_type", subscriber.Type).Find(&subscribeTopicMappingPOs)
 	if err != nil {
 		return nil, err
 	}
-	var subscribeTopicMappings []*subscribe.SubscribeTopicMapping
+	var subscribeTopicMappings []*subscriber.SubscribeTopicMapping
 	for _, subscribeTopicMappingPO := range subscribeTopicMappingPOs {
 		subscribeTopicMappings = append(subscribeTopicMappings, subscribeTopicMappingPO.ConvertToEntity())
 	}
 	return subscribeTopicMappings, nil
 }
 
-func (r *NotificationRepository) SaveSubscribeTopicMapping(mapping *subscribe.SubscribeTopicMapping) error {
+func (r *NotificationRepository) SaveSubscribeTopicMapping(mapping *subscriber.SubscribeTopicMapping) error {
 	_, err := r.DB.Table(SubscriberTopicMappingTableName).Insert(ConvertSubscribeTopicMappingPO(mapping))
 	if err != nil {
 		return err
@@ -227,7 +227,7 @@ func (r *NotificationRepository) SaveSubscribeTopicMapping(mapping *subscribe.Su
 	return nil
 }
 
-func (r *NotificationRepository) RemoveSubscribeTopicMapping(mapping *subscribe.SubscribeTopicMapping) error {
+func (r *NotificationRepository) RemoveSubscribeTopicMapping(mapping *subscriber.SubscribeTopicMapping) error {
 	_, err := r.DB.Table(SubscriberTopicMappingTableName).Where("subscriber_uuid = ?", mapping.SubscriberUuid).And("subscriber_type", mapping.SubscriberType).Delete(&SubscribeTopicMappingPO{})
 	if err != nil {
 		return err

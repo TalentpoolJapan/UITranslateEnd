@@ -26,8 +26,8 @@ func RegisterNotificationHandler(engine *gin.Engine) {
 	engine.POST("/admin/notification/trigger", AddTrigger)
 	engine.PUT("/admin/notification/trigger", UpdateTrigger)
 
-	// subscribe
-	engine.POST("/api/notification/subscribe", SubscribeTopic)
+	// subscriber
+	engine.POST("/api/notification/subscriber", SubscribeTopic)
 }
 
 func SubscribeTopic(context *gin.Context) {

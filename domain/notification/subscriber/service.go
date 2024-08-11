@@ -1,4 +1,4 @@
-package subscribe
+package subscriber
 
 import (
 	"log"
@@ -7,7 +7,6 @@ import (
 type SubscribeDomainService interface {
 	SubscribeTopic(subscriber *Subscriber, topicId int64) error
 	UnsubscribeTopic(subscriber *Subscriber, topicId int64) error
-	FindSubscribeTopic(subscriber *Subscriber) (*SubscriberSubscribedTopic, error)
 }
 
 type subscribeDomainService struct {
@@ -21,12 +20,8 @@ func NewSubscribeDomainService(subscribeRepo SubscribeRepo) SubscribeDomainServi
 }
 
 func (g *subscribeDomainService) SubscribeTopic(subscriber *Subscriber, topicId int64) error {
-	subscribedTopic, err := g.FindSubscribeTopic(subscriber)
-	if err != nil {
-		return err
-	}
-	if subscribedTopic.alreadySubscribe(topicId) {
-		log.Printf("Subscriber %s already subscribe topic %d", subscriber.Uuid, topicId)
+	if subscriber.alreadySubscribe(topicId) {
+		log.Printf("Subscriber %s already subscriber topic %d", subscriber.Uuid, topicId)
 		return nil
 	}
 	mapping := &SubscribeTopicMapping{
@@ -34,7 +29,7 @@ func (g *subscribeDomainService) SubscribeTopic(subscriber *Subscriber, topicId 
 		SubscriberUuid: subscriber.Uuid,
 		TopicId:        topicId,
 	}
-	err = g.subscribeRepo.SaveSubscribeTopicMapping(mapping)
+	err := g.subscribeRepo.SaveSubscribeTopicMapping(mapping)
 	if err != nil {
 		return err
 	}
@@ -42,11 +37,7 @@ func (g *subscribeDomainService) SubscribeTopic(subscriber *Subscriber, topicId 
 }
 
 func (g *subscribeDomainService) UnsubscribeTopic(subscriber *Subscriber, topicId int64) error {
-	subscribedTopic, err := g.FindSubscribeTopic(subscriber)
-	if err != nil {
-		return err
-	}
-	if !subscribedTopic.alreadySubscribe(topicId) {
+	if !subscriber.alreadySubscribe(topicId) {
 		log.Printf("Subscriber %s already unsubscribe topic %d", subscriber.Uuid, topicId)
 		return nil
 	}
@@ -55,24 +46,9 @@ func (g *subscribeDomainService) UnsubscribeTopic(subscriber *Subscriber, topicI
 		SubscriberUuid: subscriber.Uuid,
 		TopicId:        topicId,
 	}
-	err = g.subscribeRepo.RemoveSubscribeTopicMapping(mapping)
+	err := g.subscribeRepo.RemoveSubscribeTopicMapping(mapping)
 	if err != nil {
 		return err
 	}
 	return nil
-}
-
-func (g *subscribeDomainService) FindSubscribeTopic(subscriber *Subscriber) (*SubscriberSubscribedTopic, error) {
-	subscribeTopicMappings, err := g.subscribeRepo.ListSubscribeTopicMappingBySubscriber(subscriber)
-	if err != nil {
-		return nil, err
-	}
-	var topicIds []int64
-	for _, mapping := range subscribeTopicMappings {
-		topicIds = append(topicIds, mapping.TopicId)
-	}
-	return &SubscriberSubscribedTopic{
-		Subscriber: *subscriber,
-		TopicIds:   topicIds,
-	}, nil
 }

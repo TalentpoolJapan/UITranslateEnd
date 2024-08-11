@@ -18,7 +18,6 @@ type TopicInfo struct {
 
 	SubscribeTarget string `json:"subscribe_target"`
 	TriggerId       int64  `json:"trigger_id"`
-	// todo cms
 }
 
 type TopicTemplate struct {

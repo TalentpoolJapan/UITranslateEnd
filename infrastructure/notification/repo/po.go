@@ -4,7 +4,7 @@ import (
 	"time"
 	"uitranslate/domain/notification"
 	"uitranslate/domain/notification/model"
-	"uitranslate/domain/notification/subscribe"
+	"uitranslate/domain/notification/subscriber"
 	"uitranslate/domain/notification/topic"
 )
 
@@ -48,10 +48,10 @@ type TriggerPO struct {
 }
 
 type SubscribeTopicMappingPO struct {
-	Id             int64                    `json:"id"`
-	SubscriberType subscribe.SubscriberType `json:"subscriber_type"`
-	SubscriberUuid string                   `json:"subscriber_uuid"`
-	TopicId        int64                    `json:"topic_id"`
+	Id             int64           `json:"id"`
+	SubscriberType subscriber.Type `json:"subscriber_type"`
+	SubscriberUuid string          `json:"subscriber_uuid"`
+	TopicId        int64           `json:"topic_id"`
 }
 
 func ConvertTopicInfoPO(entity topic.TopicInfo) *TopicInfoPO {
@@ -130,7 +130,7 @@ func (po *TriggerPO) ConvertToEntity() *model.Trigger {
 	}
 }
 
-func ConvertSubscribeTopicMappingPO(entity *subscribe.SubscribeTopicMapping) *SubscribeTopicMappingPO {
+func ConvertSubscribeTopicMappingPO(entity *subscriber.SubscribeTopicMapping) *SubscribeTopicMappingPO {
 	return &SubscribeTopicMappingPO{
 		Id:             entity.ID,
 		SubscriberType: entity.SubscriberType,
@@ -139,8 +139,8 @@ func ConvertSubscribeTopicMappingPO(entity *subscribe.SubscribeTopicMapping) *Su
 	}
 }
 
-func (po *SubscribeTopicMappingPO) ConvertToEntity() *subscribe.SubscribeTopicMapping {
-	return &subscribe.SubscribeTopicMapping{
+func (po *SubscribeTopicMappingPO) ConvertToEntity() *subscriber.SubscribeTopicMapping {
+	return &subscriber.SubscribeTopicMapping{
 		ID:             po.Id,
 		SubscriberType: po.SubscriberType,
 		SubscriberUuid: po.SubscriberUuid,

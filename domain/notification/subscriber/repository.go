@@ -1,4 +1,4 @@
-package subscribe
+package subscriber
 
 type SubscribeRepo interface {
 	ListSubscribeTopicMappingBySubscriber(subscriber *Subscriber) ([]*SubscribeTopicMapping, error)

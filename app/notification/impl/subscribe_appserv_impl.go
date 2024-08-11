@@ -5,19 +5,19 @@ import (
 	"log"
 	"uitranslate/app/notification"
 	"uitranslate/domain/notification/gateway"
-	"uitranslate/domain/notification/subscribe"
+	"uitranslate/domain/notification/subscriber"
 	"uitranslate/domain/notification/topic"
 )
 
 type SubscribeAppServImpl struct {
 	userGateway         gateway.UserGateway
 	topicGateway        gateway.TopicGateway
-	subscribeDomainServ subscribe.SubscribeDomainService
+	subscribeDomainServ subscriber.SubscribeDomainService
 }
 
 func NewSubscribeAppServImpl(userGateway gateway.UserGateway,
 	topicGateway gateway.TopicGateway,
-	subscribeDomainServ subscribe.SubscribeDomainService) notification.SubscribeAppServ {
+	subscribeDomainServ subscriber.SubscribeDomainService) notification.SubscribeAppServ {
 	return &SubscribeAppServImpl{
 		userGateway:         userGateway,
 		topicGateway:        topicGateway,
@@ -36,8 +36,8 @@ func (s *SubscribeAppServImpl) SubscribeTopic(cmd notification.SubscribeTopicCmd
 		return getTopicInfoErr
 	}
 
-	// subscribe
-	subscriber := &subscribe.Subscriber{
+	// subscriber
+	subscriber := &subscriber.Subscriber{
 		Uuid:  userInfo.Uuid,
 		Name:  userInfo.Name,
 		Email: userInfo.Email,
@@ -61,7 +61,7 @@ func (s *SubscribeAppServImpl) UnsubscribeTopic(cmd notification.UnsubscribeTopi
 	}
 
 	// unsubscribe
-	subscriber := &subscribe.Subscriber{
+	subscriber := &subscriber.Subscriber{
 		Uuid:  userInfo.Uuid,
 		Name:  userInfo.Name,
 		Email: userInfo.Email,
