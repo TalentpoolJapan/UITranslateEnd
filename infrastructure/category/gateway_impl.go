@@ -86,11 +86,13 @@ func (c GatewayImpl) AddCategory(category *category.Category) error {
 
 	category.ID = newCategoryId
 	err := c.repo.CreateCategory(category)
+	c.flushCache()
 	return err
 }
 
 func (c GatewayImpl) UpdateCategory(category *category.Category) error {
 	err := c.repo.UpdateCategory(category)
+	c.flushCache()
 	return err
 }
 
@@ -109,4 +111,8 @@ func (c GatewayImpl) PageCategory(param *category.QueryCategoryPage) (int64, []*
 		return 0, nil, err
 	}
 	return total, categories, nil
+}
+
+func (c GatewayImpl) flushCache() {
+	c.cache.Flush()
 }
