@@ -8,7 +8,7 @@ type RestResult struct {
 
 type ApiCode struct {
 	Msg  string `json:"Msg"`
-	Code int    `json:"PostalCode"`
+	Code int    `json:"Code"`
 }
 type ApiRestResult struct {
 	Code    ApiCode     `json:"code"`
