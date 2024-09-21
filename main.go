@@ -101,6 +101,7 @@ func main() {
 
 	web.RegisterCategoryHandler(r)
 	web.RegisterNotificationHandler(r)
+	web.RegisterPostalCodeHandler(r)
 
 	r.Run(":8332")
 
