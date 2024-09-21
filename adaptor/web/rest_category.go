@@ -86,18 +86,18 @@ func AddCategory(c *gin.Context) {
 //	var reqs []dto.AddCategoryReq
 //	c.ShouldBindJSON(&reqs)
 //	//if err != nil {
-//	//	c.JSON(http.StatusBadRequest, RestResult{Code: -1, Message: "Invalid request"})
+//	//	c.JSON(http.StatusBadRequest, RestResult{PostalCode: -1, Message: "Invalid request"})
 //	//	return
 //	//}
 //	for _, req := range reqs {
 //		bizErr := CategoryAppServ.AddCategory(req)
 //		if bizErr != nil {
-//			c.JSON(http.StatusInternalServerError, RestResult{Code: -1, Message: bizErr.Error()})
+//			c.JSON(http.StatusInternalServerError, RestResult{PostalCode: -1, Message: bizErr.Error()})
 //			return
 //		}
 //	}
 //
-//	c.JSON(http.StatusOK, RestResult{Code: 0, Message: "Category added successfully"})
+//	c.JSON(http.StatusOK, RestResult{PostalCode: 0, Message: "Category added successfully"})
 //}
 
 func UpdateCategory(c *gin.Context) {
