@@ -219,11 +219,13 @@ type JapanCity struct {
 
 // /////////////////这部分对应网页界面语言////////////////////////
 type UITranslate struct {
-	Id       int    `json:"id"`
-	Transkey string `json:"transkey"`
-	English  string `json:"english" binding:"required"`
-	Japanese string `json:"japanese" binding:"required"`
-	Classid  int    `json:"classid" binding:"required"`
+	Id          int    `json:"id"`
+	Transkey    string `json:"transkey"`
+	English     string `json:"english" binding:"required"`
+	Japanese    string `json:"japanese" binding:"required"`
+	Classid     int    `json:"classid" binding:"required"`
+	Description string `json:"description"`
+	Image       string `json:"image"`
 }
 
 /////////////////////////////////////////////
