@@ -16,19 +16,40 @@ type CategoryApplicationServiceImpl struct {
 	gateway category2.Gateway
 }
 
-func (serv *CategoryApplicationServiceImpl) ListCategoryByParentName(name string) ([]*dto2.CategoryDetailResp, error) {
+// api用的接口
+func (serv *CategoryApplicationServiceImpl) ListCategoryByParentName(name string, language string) ([]*dto2.CategoryDetailResp, error) {
 	allCategories, err := serv.gateway.ListCategoryByParentName(name)
 	if err != nil {
 		return nil, err
 	}
 	// filter status
-	var publishCategories []*category2.Category
+	var publishCategories []*dto2.CategoryDetailResp
+	// fixme 缓存
 	for _, c := range allCategories {
 		if c.Status == category2.Published {
-			publishCategories = append(publishCategories, c)
+			publishCategories = append(publishCategories, serv.buildCategoryDetailResp(c, language))
 		}
 	}
-	return dto2.ToDtoList(publishCategories), nil
+
+	return publishCategories, nil
+}
+
+func (serv *CategoryApplicationServiceImpl) buildCategoryDetailResp(category *category2.Category, language string) *dto2.CategoryDetailResp {
+	detailResp := dto2.ToDto(category)
+	if language == "japanese" {
+		detailResp.Name = category.NameJa
+	} else {
+		detailResp.Name = category.NameEn
+	}
+	children, err := serv.gateway.ListCategoryByParentId(category.ID)
+	if err == nil && len(children) > 1 {
+		for _, c := range children {
+			if c.Status == category2.Published {
+				detailResp.Children = append(detailResp.Children, serv.buildCategoryDetailResp(c, language))
+			}
+		}
+	}
+	return detailResp
 }
 
 func (serv *CategoryApplicationServiceImpl) CategoryApiDataById(id int64) (*dto2.CategoryDetailResp, error) {

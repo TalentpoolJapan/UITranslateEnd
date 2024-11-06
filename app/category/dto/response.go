@@ -13,6 +13,8 @@ type CategoryDetailResp struct {
 	NameEn    string `json:"name_en"`
 	NameJa    string `json:"name_ja"`
 	Status    int    `json:"status"`
+
+	Children []*CategoryDetailResp `json:"children"`
 }
 
 type CategoryPageResp struct {
@@ -38,6 +40,7 @@ func ToDto(category *category.Category) *CategoryDetailResp {
 
 func ToDtoList(categories []*category.Category) []*CategoryDetailResp {
 	var arr []*CategoryDetailResp
+
 	for _, category := range categories {
 		arr = append(arr, ToDto(category))
 	}

@@ -1,18 +1,23 @@
 package category
 
 import (
+	"github.com/patrickmn/go-cache"
+	"strconv"
+	"time"
 	"uitranslate/domain/category"
 	"uitranslate/infrastructure/category/repo"
 )
 
 var (
 	Impl category.Gateway = &GatewayImpl{
-		repo: repo.NewCategoryRepository(),
+		repo:  repo.NewCategoryRepository(),
+		cache: cache.New(1*time.Hour, 1*time.Hour),
 	}
 )
 
 type GatewayImpl struct {
-	repo *repo.CategoryRepository
+	repo  *repo.CategoryRepository
+	cache *cache.Cache
 }
 
 func (c GatewayImpl) GetCategoryById(id int64) (*category.Category, error) {
@@ -24,6 +29,11 @@ func (c GatewayImpl) GetCategoryById(id int64) (*category.Category, error) {
 }
 
 func (c GatewayImpl) ListCategoryByParentId(parentId int64) ([]*category.Category, error) {
+	cacheKey := "categories_" + strconv.FormatInt(parentId, 10)
+	if categories, found := c.cache.Get(cacheKey); found {
+		return categories.([]*category.Category), nil
+	}
+
 	wrapper := &repo.QueryWrapper{
 		ParentId: parentId,
 	}
@@ -31,6 +41,7 @@ func (c GatewayImpl) ListCategoryByParentId(parentId int64) ([]*category.Categor
 	if err != nil {
 		return nil, err
 	}
+	c.cache.Set(cacheKey, categories, 1*time.Hour)
 	return categories, nil
 }
 
@@ -75,11 +86,13 @@ func (c GatewayImpl) AddCategory(category *category.Category) error {
 
 	category.ID = newCategoryId
 	err := c.repo.CreateCategory(category)
+	c.flushCache()
 	return err
 }
 
 func (c GatewayImpl) UpdateCategory(category *category.Category) error {
 	err := c.repo.UpdateCategory(category)
+	c.flushCache()
 	return err
 }
 
@@ -98,4 +111,8 @@ func (c GatewayImpl) PageCategory(param *category.QueryCategoryPage) (int64, []*
 		return 0, nil, err
 	}
 	return total, categories, nil
+}
+
+func (c GatewayImpl) flushCache() {
+	c.cache.Flush()
 }
