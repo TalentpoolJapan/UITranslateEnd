@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	MYSQL_HOST    = "tcp(127.0.0.1:3306)"
+	MYSQL_HOST    = "tcp(13.231.174.2:3306)"
 	MYSQL_SECRECT = "yYVim5WbqzkWziNY"
 	//EEpLWKlYixYtYGSx
 	//MYSQL_HOST = "tcp(192.168.1.165:3306)"
