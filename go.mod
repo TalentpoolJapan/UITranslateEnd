@@ -1,6 +1,6 @@
 module uitranslate
 
-go 1.20.8
+go 1.23.0
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
