@@ -16,8 +16,8 @@ COPY . .
 # 构建应用
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
-# 使用 scratch 作为最小化的运行环境
-FROM scratch
+# 使用 scratch 作为最小化的运行环境 --- scratch不包含网络等基础包 不建议使用
+FROM alpine
 
 # 从 builder 阶段复制二进制文件和其他必要的文件到当前阶段
 COPY --from=builder /app/main .
